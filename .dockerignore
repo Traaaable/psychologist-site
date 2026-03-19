@@ -44,3 +44,8 @@ README.md
 *.md
 coverage
 .vercel
+
+# Re-include public (might be excluded by some pattern)
+!public/
+!public/images/
+!public/uploads/
