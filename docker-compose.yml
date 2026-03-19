@@ -1,0 +1,30 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: psychologist-site
+    restart: unless-stopped
+    ports:
+      - '3000:3000'
+    environment:
+      NODE_ENV: production
+      PORT: '3000'
+      HOSTNAME: '0.0.0.0'
+      # Пароль для панели управления. Измените перед запуском!
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:-admin123}
+      # Секретный ключ сессии. Измените перед запуском!
+      ADMIN_SECRET: ${ADMIN_SECRET:-default-secret-change-in-production}
+    volumes:
+      # Данные сайта хранятся здесь — не исчезают при перезапуске контейнера
+      - ./data:/app/data
+      # Загруженные фото
+      - ./public/uploads:/app/public/uploads
+    healthcheck:
+      test: ['CMD', 'wget', '-q', '--spider', 'http://localhost:3000']
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s

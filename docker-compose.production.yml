@@ -1,0 +1,27 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: psychologist-site
+    restart: unless-stopped
+    ports:
+      # Сайт открывается по IP без указания порта
+      - '80:3000'
+    environment:
+      NODE_ENV: production
+      PORT: '3000'
+      HOSTNAME: '0.0.0.0'
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD}
+      ADMIN_SECRET: ${ADMIN_SECRET}
+    volumes:
+      # Данные сайта сохраняются между перезапусками
+      - ./data:/app/data
+      # Загруженные фото сохраняются между перезапусками
+      - ./public/uploads:/app/public/uploads
+    healthcheck:
+      test: ['CMD', 'wget', '-q', '--spider', 'http://localhost:3000']
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
