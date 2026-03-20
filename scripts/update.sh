@@ -6,6 +6,16 @@ if docker compose version &> /dev/null; then
     COMPOSE_CMD="docker compose"
 fi
 
+ensure_runtime_permissions() {
+    mkdir -p data public/uploads
+
+    if [ "$(id -u)" = "0" ]; then
+        chown -R 1001:1001 data public/uploads
+    fi
+
+    chmod -R u+rwX data public/uploads 2>/dev/null || true
+}
+
 echo "=== Обновление психолог-сайта ==="
 
 if [ -d .git ]; then
@@ -14,6 +24,7 @@ if [ -d .git ]; then
 fi
 
 echo "Пересборка и перезапуск..."
+ensure_runtime_permissions
 $COMPOSE_CMD -f docker-compose.production.yml down
 $COMPOSE_CMD -f docker-compose.production.yml up -d --build
 

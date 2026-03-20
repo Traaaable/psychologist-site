@@ -18,6 +18,16 @@ if docker compose version &> /dev/null; then
     COMPOSE_CMD="docker compose"
 fi
 
+ensure_runtime_permissions() {
+    mkdir -p data public/uploads
+
+    if [ "$(id -u)" = "0" ]; then
+        chown -R 1001:1001 data public/uploads
+    fi
+
+    chmod -R u+rwX data public/uploads 2>/dev/null || true
+}
+
 if [ ! -f .env ]; then
     echo "Создание .env из .env.example..."
     if [ -f .env.example ]; then
@@ -35,6 +45,7 @@ if [ ! -f .env ]; then
 fi
 
 echo "Сборка и запуск контейнера..."
+ensure_runtime_permissions
 $COMPOSE_CMD -f docker-compose.production.yml down 2>/dev/null || true
 $COMPOSE_CMD -f docker-compose.production.yml up -d --build
 
