@@ -16,6 +16,14 @@ ensure_runtime_permissions() {
     chmod -R u+rwX data public/uploads 2>/dev/null || true
 }
 
+fix_container_permissions() {
+    docker exec -u 0 psychologist-site sh -lc "
+        mkdir -p /app/data /app/public/uploads &&
+        chown -R nextjs:nodejs /app/data /app/public/uploads &&
+        chmod -R u+rwX /app/data /app/public/uploads
+    " >/dev/null 2>&1 || true
+}
+
 echo "=== Обновление психолог-сайта ==="
 
 if [ -d .git ]; then
@@ -27,6 +35,8 @@ echo "Пересборка и перезапуск..."
 ensure_runtime_permissions
 $COMPOSE_CMD -f docker-compose.production.yml down
 $COMPOSE_CMD -f docker-compose.production.yml up -d --build
+sleep 2
+fix_container_permissions
 
 echo "Ожидание запуска..."
 sleep 15

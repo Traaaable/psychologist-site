@@ -28,6 +28,14 @@ ensure_runtime_permissions() {
     chmod -R u+rwX data public/uploads 2>/dev/null || true
 }
 
+fix_container_permissions() {
+    docker exec -u 0 psychologist-site sh -lc "
+        mkdir -p /app/data /app/public/uploads &&
+        chown -R nextjs:nodejs /app/data /app/public/uploads &&
+        chmod -R u+rwX /app/data /app/public/uploads
+    " >/dev/null 2>&1 || true
+}
+
 if [ ! -f .env ]; then
     echo "Создание .env из .env.example..."
     if [ -f .env.example ]; then
@@ -48,6 +56,8 @@ echo "Сборка и запуск контейнера..."
 ensure_runtime_permissions
 $COMPOSE_CMD -f docker-compose.production.yml down 2>/dev/null || true
 $COMPOSE_CMD -f docker-compose.production.yml up -d --build
+sleep 2
+fix_container_permissions
 
 echo ""
 echo "Ожидание запуска сайта..."

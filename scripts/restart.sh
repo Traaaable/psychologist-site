@@ -13,4 +13,10 @@ fi
 chmod -R u+rwX data public/uploads 2>/dev/null || true
 
 $COMPOSE_CMD -f docker-compose.production.yml restart
+sleep 2
+docker exec -u 0 psychologist-site sh -lc "
+    mkdir -p /app/data /app/public/uploads &&
+    chown -R nextjs:nodejs /app/data /app/public/uploads &&
+    chmod -R u+rwX /app/data /app/public/uploads
+" >/dev/null 2>&1 || true
 echo "Готово."
