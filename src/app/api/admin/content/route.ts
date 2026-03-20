@@ -9,7 +9,7 @@ function unauthorized() {
 }
 
 export async function GET(request: NextRequest) {
-  if (!isAuthenticatedFromRequest(request)) return unauthorized()
+  if (!(await isAuthenticatedFromRequest(request))) return unauthorized()
   try {
     const content = getContent()
     return NextResponse.json(content)
@@ -19,7 +19,7 @@ export async function GET(request: NextRequest) {
 }
 
 export async function PATCH(request: NextRequest) {
-  if (!isAuthenticatedFromRequest(request)) return unauthorized()
+  if (!(await isAuthenticatedFromRequest(request))) return unauthorized()
   try {
     const body = await request.json() as { section: keyof SiteContent; data: unknown }
     const { section, data } = body

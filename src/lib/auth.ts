@@ -79,18 +79,10 @@ export async function isAuthenticated(): Promise<boolean> {
   }
 }
 
-export function isAuthenticatedFromRequest(request: NextRequest): boolean {
+export async function isAuthenticatedFromRequest(request: NextRequest): Promise<boolean> {
   const token = request.cookies.get(COOKIE_NAME)?.value
   if (!token) return false
-  const lastDot = token.lastIndexOf('.')
-  if (lastDot === -1) return false
-  const payload = token.substring(0, lastDot)
-  const signature = token.substring(lastDot + 1)
-  const [tsStr] = payload.split('.')
-  const ts = parseInt(tsStr, 10)
-  if (isNaN(ts)) return false
-  if (Date.now() - ts >= SESSION_DURATION) return false
-  return true
+  return verifySessionToken(token)
 }
 
 export { COOKIE_NAME, SESSION_DURATION }

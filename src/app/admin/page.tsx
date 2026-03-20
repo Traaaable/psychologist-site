@@ -6,7 +6,7 @@ import Link from 'next/link'
 
 export default async function AdminDashboard() {
   const auth = await isAuthenticated()
-  if (!auth) redirect('/admin/login')
+  if (!auth) redirect('/manage/login')
 
   const content = getContent()
 

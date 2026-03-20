@@ -10,7 +10,7 @@ const MAX_SIZE = 5 * 1024 * 1024
 const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp']
 
 export async function POST(request: NextRequest) {
-  if (!isAuthenticatedFromRequest(request)) {
+  if (!(await isAuthenticatedFromRequest(request))) {
     return NextResponse.json({ error: 'Необходима авторизация' }, { status: 401 })
   }
   try {
