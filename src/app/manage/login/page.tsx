@@ -13,6 +13,7 @@ export default function ManageLoginPage() {
     e.preventDefault()
     setError('')
     setLoading(true)
+    console.info('[admin-debug] login:start', { passwordLength: password.length })
 
     try {
       const res = await fetch('/api/admin/auth', {
@@ -24,12 +25,18 @@ export default function ManageLoginPage() {
       const data = await res.json()
 
       if (res.ok) {
+        console.info('[admin-debug] login:success', { status: res.status })
         router.push('/admin')
         router.refresh()
       } else {
+        console.warn('[admin-debug] login:failed', {
+          status: res.status,
+          error: data.error,
+        })
         setError(data.error || 'Неверный пароль')
       }
-    } catch {
+    } catch (error) {
+      console.error('[admin-debug] login:error', { error })
       setError('Ошибка соединения. Попробуйте ещё раз.')
     } finally {
       setLoading(false)

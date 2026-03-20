@@ -6,6 +6,7 @@
 
 import fs from 'fs'
 import path from 'path'
+import { logDebug, logError, logInfo } from '@/lib/logger'
 
 // Путь к файлу данных
 const DATA_FILE = path.join(process.cwd(), 'data', 'content.json')
@@ -112,9 +113,18 @@ export interface SiteContent {
 
 export function getContent(): SiteContent {
   try {
+    logDebug('content.read.start', { file: DATA_FILE })
     const raw = fs.readFileSync(DATA_FILE, 'utf-8')
-    return JSON.parse(raw) as SiteContent
-  } catch {
+    const content = JSON.parse(raw) as SiteContent
+    logDebug('content.read.success', {
+      file: DATA_FILE,
+      sizeBytes: Buffer.byteLength(raw, 'utf-8'),
+      version: content._meta.version,
+      lastUpdated: content._meta.lastUpdated,
+    })
+    return content
+  } catch (error) {
+    logError('content.read.error', { file: DATA_FILE, error })
     throw new Error('Не удалось прочитать файл контента. Проверьте, что файл data/content.json существует.')
   }
 }
@@ -135,8 +145,16 @@ export function saveContent(data: SiteContent): void {
 
   // Атомарная запись: сначала во временный файл, потом переименовываем
   const tmpFile = DATA_FILE + '.tmp'
-  fs.writeFileSync(tmpFile, JSON.stringify(data, null, 2), 'utf-8')
+  const serialized = JSON.stringify(data, null, 2)
+  fs.writeFileSync(tmpFile, serialized, 'utf-8')
   fs.renameSync(tmpFile, DATA_FILE)
+
+  logInfo('content.write.success', {
+    file: DATA_FILE,
+    sizeBytes: Buffer.byteLength(serialized, 'utf-8'),
+    version: data._meta.version,
+    lastUpdated: data._meta.lastUpdated,
+  })
 }
 
 // ============================

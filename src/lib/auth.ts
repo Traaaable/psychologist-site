@@ -6,6 +6,7 @@
 
 import { cookies } from 'next/headers'
 import type { NextRequest } from 'next/server'
+import { logDebug, redact } from '@/lib/logger'
 
 const SECRET = process.env.ADMIN_SECRET || 'change-me-in-production'
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'admin123'
@@ -49,40 +50,93 @@ export function checkPassword(password: string): boolean {
 export async function createSessionToken(): Promise<string> {
   const payload = `${Date.now()}.${Math.random().toString(36).substring(2)}`
   const signature = await hmacSign(payload, SECRET)
-  return `${payload}.${signature}`
+  const token = `${payload}.${signature}`
+
+  logDebug('auth.session.created', {
+    tokenPreview: redact(token),
+    issuedAt: payload.split('.')[0],
+  })
+
+  return token
 }
 
 export async function verifySessionToken(token: string): Promise<boolean> {
+  const tokenPreview = redact(token)
   const lastDot = token.lastIndexOf('.')
-  if (lastDot === -1) return false
+  if (lastDot === -1) {
+    logDebug('auth.session.invalid_format', { tokenPreview })
+    return false
+  }
   const payload = token.substring(0, lastDot)
   const signature = token.substring(lastDot + 1)
 
   const valid = await hmacVerify(payload, SECRET, signature)
-  if (!valid) return false
+  if (!valid) {
+    logDebug('auth.session.invalid_signature', { tokenPreview })
+    return false
+  }
 
   const [tsStr] = payload.split('.')
   const ts = parseInt(tsStr, 10)
-  if (isNaN(ts)) return false
+  if (isNaN(ts)) {
+    logDebug('auth.session.invalid_timestamp', { tokenPreview, payload })
+    return false
+  }
 
-  return Date.now() - ts < SESSION_DURATION
+  const ageMs = Date.now() - ts
+  const isValid = ageMs < SESSION_DURATION
+
+  logDebug(isValid ? 'auth.session.valid' : 'auth.session.expired', {
+    tokenPreview,
+    ageMs,
+    sessionDurationMs: SESSION_DURATION,
+  })
+
+  return isValid
 }
 
 export async function isAuthenticated(): Promise<boolean> {
   try {
     const cookieStore = await cookies()
     const token = cookieStore.get(COOKIE_NAME)?.value
-    if (!token) return false
-    return verifySessionToken(token)
+    if (!token) {
+      logDebug('auth.cookies.missing', { cookieName: COOKIE_NAME })
+      return false
+    }
+
+    const authenticated = await verifySessionToken(token)
+    logDebug('auth.cookies.checked', {
+      cookieName: COOKIE_NAME,
+      authenticated,
+      tokenPreview: redact(token),
+    })
+
+    return authenticated
   } catch {
+    logDebug('auth.cookies.read_failed')
     return false
   }
 }
 
 export async function isAuthenticatedFromRequest(request: NextRequest): Promise<boolean> {
   const token = request.cookies.get(COOKIE_NAME)?.value
-  if (!token) return false
-  return verifySessionToken(token)
+  if (!token) {
+    logDebug('auth.request_cookie.missing', {
+      cookieName: COOKIE_NAME,
+      path: request.nextUrl.pathname,
+    })
+    return false
+  }
+
+  const authenticated = await verifySessionToken(token)
+  logDebug('auth.request_cookie.checked', {
+    cookieName: COOKIE_NAME,
+    path: request.nextUrl.pathname,
+    authenticated,
+    tokenPreview: redact(token),
+  })
+
+  return authenticated
 }
 
 export { COOKIE_NAME, SESSION_DURATION }

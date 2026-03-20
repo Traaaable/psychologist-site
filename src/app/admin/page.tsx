@@ -3,12 +3,20 @@ import { redirect } from 'next/navigation'
 import { getContent } from '@/lib/content'
 import { AdminShell } from '@/components/admin/AdminShell'
 import Link from 'next/link'
+import { logInfo } from '@/lib/logger'
 
 export default async function AdminDashboard() {
   const auth = await isAuthenticated()
-  if (!auth) redirect('/manage/login')
+  if (!auth) {
+    logInfo('admin.dashboard.redirect_to_login', { target: '/manage/login' })
+    redirect('/manage/login')
+  }
 
   const content = getContent()
+  logInfo('admin.dashboard.rendered', {
+    specialistName: content.specialist.shortName || content.specialist.name || 'Психолог',
+    lastUpdated: content._meta.lastUpdated,
+  })
 
   const sections = [
     {

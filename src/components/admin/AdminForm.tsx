@@ -412,6 +412,10 @@ export function useSaveSection(section: string) {
   const [changed, setChanged] = useState(false)
 
   const save = useCallback(async (data: unknown) => {
+    console.info('[admin-debug] save-section:start', {
+      section,
+      payloadType: Array.isArray(data) ? 'array' : typeof data,
+    })
     const res = await fetch('/api/admin/content', {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
@@ -419,8 +423,17 @@ export function useSaveSection(section: string) {
     })
     if (!res.ok) {
       const err = await res.json()
+      console.error('[admin-debug] save-section:error', {
+        section,
+        status: res.status,
+        error: err.error,
+      })
       throw new Error(err.error || 'Ошибка сохранения')
     }
+    console.info('[admin-debug] save-section:success', {
+      section,
+      status: res.status,
+    })
     setChanged(false)
   }, [section])
 

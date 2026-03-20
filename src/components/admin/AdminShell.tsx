@@ -102,7 +102,9 @@ export function AdminShell({ children, specialistName = 'Панель управ
 
   const handleLogout = async () => {
     setLoggingOut(true)
+    console.info('[admin-debug] logout:start')
     await fetch('/api/admin/auth', { method: 'DELETE' })
+    console.info('[admin-debug] logout:success')
     router.push('/manage/login')
     router.refresh()
   }
