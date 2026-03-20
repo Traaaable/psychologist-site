@@ -14,6 +14,7 @@ services:
       HOSTNAME: '0.0.0.0'
       ADMIN_PASSWORD: ${ADMIN_PASSWORD}
       ADMIN_SECRET: ${ADMIN_SECRET}
+      ADMIN_COOKIE_SECURE: ${ADMIN_COOKIE_SECURE:-}
     volumes:
       # Данные сайта сохраняются между перезапусками
       - ./data:/app/data

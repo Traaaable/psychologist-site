@@ -20,11 +20,17 @@ export async function POST(request: NextRequest) {
     const token = await createSessionToken()
     const forwardedProto = request.headers.get('x-forwarded-proto')
     const isHttps = request.nextUrl.protocol === 'https:' || forwardedProto === 'https'
+    const secureCookieMode = process.env.ADMIN_COOKIE_SECURE?.toLowerCase()
+    const shouldUseSecureCookie = secureCookieMode === 'true'
+      ? true
+      : secureCookieMode === 'false'
+        ? false
+        : process.env.NODE_ENV === 'production' && isHttps
 
     const response = NextResponse.json({ success: true })
     response.cookies.set(COOKIE_NAME, token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production' && isHttps,
+      secure: shouldUseSecureCookie,
       sameSite: 'lax',
       maxAge: SESSION_DURATION / 1000,
       path: '/',
