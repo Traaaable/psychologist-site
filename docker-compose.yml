@@ -11,13 +11,14 @@ services:
       NODE_ENV: production
       PORT: '3000'
       HOSTNAME: '0.0.0.0'
+      CONTENT_FILE_PATH: ${CONTENT_FILE_PATH:-/app/runtime-data/content.json}
       # Пароль для панели управления. Измените перед запуском!
       ADMIN_PASSWORD: ${ADMIN_PASSWORD:-admin123}
       # Секретный ключ сессии. Измените перед запуском!
       ADMIN_SECRET: ${ADMIN_SECRET:-default-secret-change-in-production}
     volumes:
-      # Данные сайта хранятся здесь — не исчезают при перезапуске контейнера
-      - ./data:/app/data
+      # Живой контент хранится отдельно от tracked-папки data
+      - ${CONTENT_STORAGE_DIR:-./runtime-data}:/app/runtime-data
       # Загруженные фото
       - ./public/uploads:/app/public/uploads
     healthcheck:

@@ -18,21 +18,43 @@ if docker compose version &> /dev/null; then
     COMPOSE_CMD="docker compose"
 fi
 
+get_content_storage_dir() {
+    local storage_dir
+    storage_dir=$(grep -E '^CONTENT_STORAGE_DIR=' .env 2>/dev/null | tail -n 1 | cut -d= -f2-)
+
+    if [ -n "$storage_dir" ]; then
+        echo "$storage_dir"
+    else
+        echo "./runtime-data"
+    fi
+}
+
+CONTENT_STORAGE_DIR="$(get_content_storage_dir)"
+
+migrate_legacy_content_if_needed() {
+    mkdir -p "$CONTENT_STORAGE_DIR"
+
+    if [ ! -f "$CONTENT_STORAGE_DIR/content.json" ] && [ -f data/content.json ]; then
+        cp data/content.json "$CONTENT_STORAGE_DIR/content.json"
+        echo "Перенёс стартовый content.json в $CONTENT_STORAGE_DIR"
+    fi
+}
+
 ensure_runtime_permissions() {
-    mkdir -p data public/uploads
+    mkdir -p "$CONTENT_STORAGE_DIR" public/uploads
 
     if [ "$(id -u)" = "0" ]; then
-        chown -R 1001:1001 data public/uploads
+        chown -R 1001:1001 "$CONTENT_STORAGE_DIR" public/uploads
     fi
 
-    chmod -R u+rwX data public/uploads 2>/dev/null || true
+    chmod -R u+rwX "$CONTENT_STORAGE_DIR" public/uploads 2>/dev/null || true
 }
 
 fix_container_permissions() {
     docker exec -u 0 psychologist-site sh -lc "
-        mkdir -p /app/data /app/public/uploads &&
-        chown -R nextjs:nodejs /app/data /app/public/uploads &&
-        chmod -R u+rwX /app/data /app/public/uploads
+        mkdir -p /app/runtime-data /app/public/uploads &&
+        chown -R nextjs:nodejs /app/runtime-data /app/public/uploads &&
+        chmod -R u+rwX /app/runtime-data /app/public/uploads
     " >/dev/null 2>&1 || true
 }
 
@@ -53,6 +75,7 @@ if [ ! -f .env ]; then
 fi
 
 echo "Сборка и запуск контейнера..."
+migrate_legacy_content_if_needed
 ensure_runtime_permissions
 $COMPOSE_CMD -f docker-compose.production.yml down 2>/dev/null || true
 $COMPOSE_CMD -f docker-compose.production.yml up -d --build

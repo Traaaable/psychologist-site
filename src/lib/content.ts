@@ -1,6 +1,7 @@
 /**
  * Библиотека для работы с контентом сайта.
- * Данные хранятся в /data/content.json и читаются на сервере.
+ * По умолчанию данные хранятся в /data/content.json, но путь можно
+ * переопределить через CONTENT_FILE_PATH для production/VPS.
  * Не используется на клиенте напрямую — только через API-роуты или Server Components.
  */
 
@@ -8,8 +9,21 @@ import fs from 'fs'
 import path from 'path'
 import { logDebug, logError, logInfo } from '@/lib/logger'
 
-// Путь к файлу данных
-const DATA_FILE = path.join(process.cwd(), 'data', 'content.json')
+const DEFAULT_DATA_FILE = path.join(process.cwd(), 'data', 'content.json')
+
+function resolveContentFilePath() {
+  const configuredPath = process.env.CONTENT_FILE_PATH?.trim()
+
+  if (!configuredPath) {
+    return DEFAULT_DATA_FILE
+  }
+
+  return path.isAbsolute(configuredPath)
+    ? configuredPath
+    : path.resolve(process.cwd(), configuredPath)
+}
+
+const DATA_FILE = resolveContentFilePath()
 
 // ============================
 // ТИПЫ ДАННЫХ
@@ -109,12 +123,39 @@ export interface SiteContent {
   }
 }
 
+function ensureContentFileExists() {
+  if (fs.existsSync(DATA_FILE)) {
+    return
+  }
+
+  const targetDir = path.dirname(DATA_FILE)
+  if (!fs.existsSync(targetDir)) {
+    fs.mkdirSync(targetDir, { recursive: true })
+  }
+
+  if (DATA_FILE !== DEFAULT_DATA_FILE && fs.existsSync(DEFAULT_DATA_FILE)) {
+    fs.copyFileSync(DEFAULT_DATA_FILE, DATA_FILE)
+    logInfo('content.bootstrap.seeded', {
+      file: DATA_FILE,
+      sourceFile: DEFAULT_DATA_FILE,
+    })
+    return
+  }
+
+  throw new Error(`Не удалось найти файл контента по пути: ${DATA_FILE}`)
+}
+
+export function getContentFilePath() {
+  return DATA_FILE
+}
+
 // ============================
 // ЧТЕНИЕ ДАННЫХ
 // ============================
 
 export function getContent(): SiteContent {
   try {
+    ensureContentFileExists()
     logDebug('content.read.start', { file: DATA_FILE })
     const raw = fs.readFileSync(DATA_FILE, 'utf-8')
     const content = JSON.parse(raw) as SiteContent
@@ -127,7 +168,7 @@ export function getContent(): SiteContent {
     return content
   } catch (error) {
     logError('content.read.error', { file: DATA_FILE, error })
-    throw new Error('Не удалось прочитать файл контента. Проверьте, что файл data/content.json существует.')
+    throw new Error(`Не удалось прочитать файл контента. Проверьте путь: ${DATA_FILE}`)
   }
 }
 
