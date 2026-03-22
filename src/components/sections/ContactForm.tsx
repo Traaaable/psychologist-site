@@ -15,12 +15,16 @@ interface ContactFormProps {
   title?: string
   subtitle?: string
   className?: string
+  city?: string
+  availableFormats?: Array<'online' | 'offline'>
 }
 
 export function ContactForm({
   title = 'Запись на консультацию',
   subtitle = 'Заполните форму, и я свяжусь с вами в течение нескольких часов, чтобы согласовать удобное время.',
   className = '',
+  city = 'вашем городе',
+  availableFormats = ['online', 'offline'],
 }: ContactFormProps) {
   const [formData, setFormData] = useState<FormData>({
     name: '',
@@ -35,15 +39,21 @@ export function ContactForm({
 
   const validate = () => {
     const newErrors: Partial<FormData> = {}
-    if (!formData.name.trim()) newErrors.name = 'Введите имя'
+
+    if (!formData.name.trim()) {
+      newErrors.name = 'Введите имя'
+    }
+
     if (!formData.phone.trim() && !formData.email.trim()) {
       newErrors.phone = 'Укажите телефон или email'
     }
+
     return newErrors
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+
     const validationErrors = validate()
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors)
@@ -51,7 +61,6 @@ export function ContactForm({
     }
 
     setIsSubmitting(true)
-    // TODO: Интеграция с CRM / email / Telegram Bot
     await new Promise((resolve) => setTimeout(resolve, 1200))
     setIsSubmitting(false)
     setIsSubmitted(true)
@@ -62,6 +71,7 @@ export function ContactForm({
   ) => {
     const { name, value } = e.target
     setFormData((prev) => ({ ...prev, [name]: value }))
+
     if (errors[name as keyof FormData]) {
       setErrors((prev) => ({ ...prev, [name]: '' }))
     }
@@ -69,10 +79,10 @@ export function ContactForm({
 
   if (isSubmitted) {
     return (
-      <div className={`text-center py-12 ${className}`}>
-        <div className="w-16 h-16 bg-[var(--color-sage-100)] rounded-full flex items-center justify-center mx-auto mb-6">
+      <div className={`py-12 text-center ${className}`}>
+        <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-[var(--color-sage-100)]">
           <svg
-            className="w-8 h-8 text-[var(--color-sage-600)]"
+            className="h-8 w-8 text-[var(--color-sage-600)]"
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
@@ -81,11 +91,12 @@ export function ContactForm({
             <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
           </svg>
         </div>
-        <h3 className="font-serif text-2xl text-[var(--color-stone-800)] mb-3">
+        <h3 className="mb-3 font-serif text-2xl text-[var(--color-stone-800)]">
           Заявка отправлена
         </h3>
         <p className="text-[var(--color-stone-500)]">
-          Я свяжусь с вами в течение нескольких часов. Если нужно срочно — напишите в Telegram.
+          Я свяжусь с вами в ближайшее время. Если вопрос срочный, можно написать мне напрямую
+          через контакты на этой странице.
         </p>
       </div>
     )
@@ -96,20 +107,19 @@ export function ContactForm({
       {(title || subtitle) && (
         <div className="mb-8">
           {title && (
-            <h2 className="font-serif text-3xl text-[var(--color-stone-800)] mb-3">{title}</h2>
+            <h2 className="mb-3 font-serif text-3xl text-[var(--color-stone-800)]">{title}</h2>
           )}
           {subtitle && (
-            <p className="text-[var(--color-stone-500)] leading-relaxed">{subtitle}</p>
+            <p className="leading-relaxed text-[var(--color-stone-500)]">{subtitle}</p>
           )}
         </div>
       )}
 
       <form onSubmit={handleSubmit} noValidate className="space-y-5">
-        {/* Имя */}
         <div>
           <label
             htmlFor="contact-name"
-            className="block text-sm font-medium text-[var(--color-stone-700)] mb-2"
+            className="mb-2 block text-sm font-medium text-[var(--color-stone-700)]"
           >
             Ваше имя <span className="text-[var(--color-accent)]">*</span>
           </label>
@@ -123,17 +133,14 @@ export function ContactForm({
             className={`input-field ${errors.name ? '!border-red-400 !ring-red-100' : ''}`}
             autoComplete="given-name"
           />
-          {errors.name && (
-            <p className="mt-1.5 text-xs text-red-500">{errors.name}</p>
-          )}
+          {errors.name && <p className="mt-1.5 text-xs text-red-500">{errors.name}</p>}
         </div>
 
-        {/* Телефон + Email в ряд на десктопе */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
           <div>
             <label
               htmlFor="contact-phone"
-              className="block text-sm font-medium text-[var(--color-stone-700)] mb-2"
+              className="mb-2 block text-sm font-medium text-[var(--color-stone-700)]"
             >
               Телефон
             </label>
@@ -147,14 +154,13 @@ export function ContactForm({
               className={`input-field ${errors.phone ? '!border-red-400' : ''}`}
               autoComplete="tel"
             />
-            {errors.phone && (
-              <p className="mt-1.5 text-xs text-red-500">{errors.phone}</p>
-            )}
+            {errors.phone && <p className="mt-1.5 text-xs text-red-500">{errors.phone}</p>}
           </div>
+
           <div>
             <label
               htmlFor="contact-email"
-              className="block text-sm font-medium text-[var(--color-stone-700)] mb-2"
+              className="mb-2 block text-sm font-medium text-[var(--color-stone-700)]"
             >
               Email
             </label>
@@ -171,32 +177,36 @@ export function ContactForm({
           </div>
         </div>
 
-        {/* Формат */}
-        <div>
-          <label
-            htmlFor="contact-format"
-            className="block text-sm font-medium text-[var(--color-stone-700)] mb-2"
-          >
-            Формат встречи
-          </label>
-          <select
-            id="contact-format"
-            name="format"
-            value={formData.format}
-            onChange={handleChange}
-            className="input-field bg-white appearance-none cursor-pointer"
-          >
-            <option value="">Выберите формат (необязательно)</option>
-            <option value="online">Онлайн (Zoom / другое)</option>
-            <option value="offline">Очно, в Москве</option>
-          </select>
-        </div>
+        {availableFormats.length > 0 && (
+          <div>
+            <label
+              htmlFor="contact-format"
+              className="mb-2 block text-sm font-medium text-[var(--color-stone-700)]"
+            >
+              Формат встречи
+            </label>
+            <select
+              id="contact-format"
+              name="format"
+              value={formData.format}
+              onChange={handleChange}
+              className="input-field appearance-none cursor-pointer bg-white"
+            >
+              <option value="">Выберите формат, если это важно</option>
+              {availableFormats.includes('online') && (
+                <option value="online">Онлайн</option>
+              )}
+              {availableFormats.includes('offline') && (
+                <option value="offline">Очно{city ? `, ${city}` : ''}</option>
+              )}
+            </select>
+          </div>
+        )}
 
-        {/* Сообщение */}
         <div>
           <label
             htmlFor="contact-message"
-            className="block text-sm font-medium text-[var(--color-stone-700)] mb-2"
+            className="mb-2 block text-sm font-medium text-[var(--color-stone-700)]"
           >
             Коротко о запросе
           </label>
@@ -206,15 +216,17 @@ export function ContactForm({
             value={formData.message}
             onChange={handleChange}
             rows={4}
-            placeholder="Опишите вкратце, с чем хотите поработать, или просто напишите, что хотите записаться..."
+            placeholder="Опишите в двух словах, с чем хотите поработать, или просто напишите, что хотите записаться..."
             className="input-field resize-none"
           />
         </div>
 
-        {/* Согласие */}
-        <p className="text-xs text-[var(--color-stone-400)] leading-relaxed">
+        <p className="text-xs leading-relaxed text-[var(--color-stone-400)]">
           Нажимая «Отправить», вы соглашаетесь с{' '}
-          <a href="/privacy" className="underline underline-offset-2 hover:text-[var(--color-sage-600)]">
+          <a
+            href="/privacy"
+            className="underline underline-offset-2 hover:text-[var(--color-sage-600)]"
+          >
             политикой конфиденциальности
           </a>
           . Ваши данные не передаются третьим лицам.

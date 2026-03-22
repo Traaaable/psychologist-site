@@ -1,11 +1,17 @@
 import type { MetadataRoute } from 'next'
-import { SITE_CONFIG } from '@/lib/constants'
+import { getContent } from '@/lib/content'
+
+export const dynamic = 'force-dynamic'
 
 export default function manifest(): MetadataRoute.Manifest {
+  const content = getContent()
+  const siteName =
+    content.seo.siteName || content.specialist.name || content.specialist.shortName || 'Психолог'
+
   return {
-    name: `${SITE_CONFIG.name} — психолог`,
-    short_name: SITE_CONFIG.name,
-    description: SITE_CONFIG.description,
+    name: siteName,
+    short_name: content.specialist.shortName || content.specialist.name || 'Психолог',
+    description: content.seo.defaultDescription,
     start_url: '/',
     display: 'standalone',
     background_color: '#fdfcf8',

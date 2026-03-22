@@ -1,20 +1,30 @@
-import { PRICING_PLANS } from '@/lib/constants'
 import { Button } from '@/components/ui/Button'
 import { SectionHeader } from '@/components/ui/SectionHeader'
+import type { PricingItem } from '@/lib/content'
 
-export function PriceCards() {
+interface PriceCardsProps {
+  items: PricingItem[]
+  title?: string
+  subtitle?: string
+}
+
+export function PriceCards({
+  items,
+  title = 'Прозрачные цены',
+  subtitle = 'Без скрытых платежей. Стоимость согласовывается до начала работы.',
+}: PriceCardsProps) {
   return (
     <section className="py-20 px-4 bg-[var(--color-cream-100)]" aria-labelledby="pricing-heading">
       <div className="max-w-5xl mx-auto">
         <SectionHeader
           label="Стоимость"
-          title="Прозрачные цены"
-          subtitle="Без скрытых платежей. Стоимость согласовывается до начала работы."
+          title={title}
+          subtitle={subtitle}
           className="mb-14"
         />
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {PRICING_PLANS.map((plan) => (
+          {items.map((plan) => (
             <div
               key={plan.id}
               className={`relative rounded-2xl p-8 flex flex-col ${
@@ -55,7 +65,7 @@ export function PriceCards() {
                     ₽
                   </span>
                 </div>
-                {plan.pricePerSession && (
+                {'pricePerSession' in plan && plan.pricePerSession && (
                   <p
                     className={`text-sm mt-1 ${
                       plan.isPopular ? 'text-[var(--color-sage-200)]' : 'text-[var(--color-stone-400)]'
@@ -73,7 +83,8 @@ export function PriceCards() {
                 }`}
               >
                 <span>{plan.duration}</span>
-                <span>{plan.format}</span>
+                {plan.format && <span>{plan.format}</span>}
+                {plan.description && !plan.format && <span>{plan.description}</span>}
               </div>
 
               {/* Фичи */}

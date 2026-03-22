@@ -22,7 +22,7 @@
     "city": "Омск",
     "address": "",
     "showAddress": false,
-    "consultationFormat": "online",
+    "consultationFormat": "both",
     "formatNote": "Очный приём в офисе"
   },
   "about": {
@@ -168,7 +168,7 @@
     }
   },
   "_meta": {
-    "lastUpdated": "2026-03-22T11:53:54.306Z",
+    "lastUpdated": "2026-03-22T12:01:00.403Z",
     "version": "1.0"
   }
 }

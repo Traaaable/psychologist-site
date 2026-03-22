@@ -5,6 +5,8 @@ import './globals.css'
 import { HeaderWrapper } from '@/components/layout/HeaderWrapper'
 import { FooterWrapper } from '@/components/layout/FooterWrapper'
 
+export const dynamic = 'force-dynamic'
+
 const inter = Inter({
   subsets: ['latin', 'cyrillic'],
   variable: '--font-inter',

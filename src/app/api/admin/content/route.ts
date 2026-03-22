@@ -1,5 +1,6 @@
 export const runtime = 'nodejs'
 
+import { revalidatePath } from 'next/cache'
 import { NextRequest, NextResponse } from 'next/server'
 import { getContent, saveContent, type SiteContent } from '@/lib/content'
 import { isAuthenticatedFromRequest } from '@/lib/auth'
@@ -7,6 +8,29 @@ import { createRequestId, getRequestMeta, logError, logInfo, logWarn, summarizeP
 
 function unauthorized() {
   return NextResponse.json({ error: 'Необходима авторизация' }, { status: 401 })
+}
+
+function revalidatePublicContent() {
+  const paths = [
+    '/',
+    '/about',
+    '/services',
+    '/how-it-works',
+    '/pricing',
+    '/faq',
+    '/contact',
+    '/blog',
+    '/privacy',
+    '/robots.txt',
+    '/sitemap.xml',
+    '/manifest.webmanifest',
+  ]
+
+  revalidatePath('/', 'layout')
+
+  for (const path of paths) {
+    revalidatePath(path)
+  }
 }
 
 export async function GET(request: NextRequest) {
@@ -77,6 +101,7 @@ export async function PATCH(request: NextRequest) {
     const current = getContent()
     const updated = { ...current, [section]: data } as SiteContent
     saveContent(updated)
+    revalidatePublicContent()
     logInfo('admin.content.patch.success', {
       requestId,
       ...requestMeta,

@@ -43,7 +43,9 @@ export interface PricingItem {
   id: string
   title: string
   price: string
+  pricePerSession?: string
   duration: string
+  format?: string
   description: string
   features: string[]
   isPopular: boolean

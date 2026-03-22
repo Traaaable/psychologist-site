@@ -2,102 +2,89 @@ import type { Metadata } from 'next'
 import { FAQAccordion } from '@/components/sections/FAQAccordion'
 import { CTASection } from '@/components/sections/CTASection'
 import { Breadcrumbs } from '@/components/ui/Breadcrumbs'
+import { getContent } from '@/lib/content'
 import { generatePageMetadata } from '@/lib/metadata'
-import { FAQ_ITEMS } from '@/lib/constants'
 
-export const metadata: Metadata = generatePageMetadata({
-  title: 'Частые вопросы',
-  description:
-    'Ответы на частые вопросы о работе с психологом: как записаться, что будет на первой сессии, сколько стоит, конфиденциально ли это и многое другое.',
-  path: '/faq',
-})
-
-// Дополнительные вопросы только для страницы FAQ
-const additionalFAQ = [
-  {
-    id: 8,
-    question: 'Как понять, что терапия помогает?',
-    answer:
-      'Результаты работы не всегда заметны сразу — иногда это постепенные, но устойчивые изменения: меньше тревоги, больше ясности в принятии решений, изменения в отношениях. Мы регулярно обсуждаем с вами, как идёт работа, что меняется, а что нет.',
-  },
-  {
-    id: 9,
-    question: 'Нужно ли мне идти в терапию, если я справляюсь сам?',
-    answer:
-      'Не обязательно. Психолог — не скорая помощь только для кризисов. Многие приходят не потому что "всё плохо", а потому что хотят лучше понять себя, развиваться или разобраться с конкретными темами. Решение за вами.',
-  },
-  {
-    id: 10,
-    question: 'Вы работаете с детьми или подростками?',
-    answer:
-      'На данный момент я работаю только со взрослыми (от 18 лет). Для работы с подростками или детьми я могу порекомендовать коллег.',
-  },
-  {
-    id: 11,
-    question: 'Что, если мне стало хуже после сессии?',
-    answer:
-      'Это бывает — особенно в начале работы или когда мы касаемся сложных тем. Если чувствуете, что состояние ухудшилось — сообщите мне на следующей сессии или напишите между встречами. Мы обсудим это и при необходимости скорректируем подход.',
-  },
-]
+export function generateMetadata(): Metadata {
+  return generatePageMetadata({
+    title: 'Частые вопросы',
+    description:
+      'Ответы на частые вопросы о работе с психологом: как записаться, как проходит первая встреча, что с конфиденциальностью и чего ожидать от консультаций.',
+    path: '/faq',
+  })
+}
 
 export default function FAQPage() {
-  const allFAQItems = [...FAQ_ITEMS, ...additionalFAQ]
+  const faqItems = getContent().faq.filter((item) => item.visible)
 
   return (
     <>
-      {/* HERO */}
-      <section className="bg-[var(--color-cream-100)] relative overflow-hidden py-16 md:py-24 px-4">
-        {/* Decorative Elements */}
-        <div className="absolute top-0 right-0 w-[500px] h-[500px] rounded-full opacity-[0.04] bg-[var(--color-sage-500)] blur-[120px] pointer-events-none" aria-hidden="true" />
-        <div className="absolute bottom-0 left-0 w-[400px] h-[400px] rounded-full opacity-[0.03] bg-[var(--color-accent)] blur-[100px] pointer-events-none" aria-hidden="true" />
-        
-        <div className="max-w-6xl mx-auto relative z-10">
+      <section className="relative overflow-hidden bg-[var(--color-cream-100)] px-4 py-16 md:py-24">
+        <div
+          className="pointer-events-none absolute right-0 top-0 h-[500px] w-[500px] rounded-full bg-[var(--color-sage-500)] opacity-[0.04] blur-[120px]"
+          aria-hidden="true"
+        />
+        <div
+          className="pointer-events-none absolute bottom-0 left-0 h-[400px] w-[400px] rounded-full bg-[var(--color-accent)] opacity-[0.03] blur-[100px]"
+          aria-hidden="true"
+        />
+
+        <div className="relative z-10 mx-auto max-w-6xl">
           <Breadcrumbs
             items={[{ label: 'Главная', href: '/' }, { label: 'Частые вопросы' }]}
             className="mb-8"
           />
           <div className="max-w-3xl space-y-6">
-            {/* Accent Line */}
             <div className="flex items-center gap-3">
-              <div className="h-1 w-8 bg-gradient-to-r from-[var(--color-sage-500)] to-[var(--color-sage-300)] rounded-full" aria-hidden="true" />
-              <span className="text-xs uppercase tracking-widest font-semibold text-[var(--color-sage-600)]">Часто задаемые вопросы</span>
+              <div
+                className="h-1 w-8 rounded-full bg-gradient-to-r from-[var(--color-sage-500)] to-[var(--color-sage-300)]"
+                aria-hidden="true"
+              />
+              <span className="text-xs font-semibold uppercase tracking-widest text-[var(--color-sage-600)]">
+                FAQ
+              </span>
             </div>
 
-            {/* Badge */}
-            <div className="inline-flex items-center gap-2.5 bg-white bg-opacity-50 backdrop-blur-md text-[var(--color-sage-700)] px-5 py-3 rounded-full text-sm font-medium border border-[var(--color-sage-200)] border-opacity-50 shadow-sm">
-              <span className="w-2 h-2 bg-[var(--color-sage-500)] rounded-full animate-pulse" />
-              <span>FAQ</span>
+            <div className="inline-flex items-center gap-2.5 rounded-full border border-[var(--color-sage-200)] bg-white/70 px-5 py-3 text-sm font-medium text-[var(--color-sage-700)] shadow-sm backdrop-blur-md">
+              <span className="h-2 w-2 animate-pulse rounded-full bg-[var(--color-sage-500)]" />
+              <span>Собрала ответы на самые частые вопросы</span>
             </div>
 
-            {/* Heading */}
-            <h1 className="font-serif text-5xl md:text-6xl lg:text-7xl text-[var(--color-stone-800)] leading-[1.05] tracking-tight">
+            <h1 className="font-serif text-5xl leading-[1.05] tracking-tight text-[var(--color-stone-800)] md:text-6xl lg:text-7xl">
               Частые вопросы
             </h1>
-            
-            {/* Subtitle */}
-            <p className="text-lg md:text-xl text-[var(--color-stone-500)] leading-relaxed font-light max-w-2xl">
-              Собрала ответы на вопросы, которые задают чаще всего. Если не нашли своего — просто напишите мне.
+
+            <p className="max-w-2xl text-lg font-light leading-relaxed text-[var(--color-stone-500)] md:text-xl">
+              Здесь собраны ответы на вопросы, которые обычно возникают перед первой
+              консультацией. Если вашего вопроса нет в списке, можно написать мне напрямую.
             </p>
           </div>
         </div>
       </section>
 
-      {/* FAQ АККОРДЕОН */}
-      <section className="py-20 px-4 bg-white">
-        <div className="max-w-3xl mx-auto">
-          <FAQAccordion
-            items={allFAQItems}
-            showHeader={false}
-          />
+      <section className="bg-white px-4 py-20">
+        <div className="mx-auto max-w-3xl">
+          {faqItems.length > 0 ? (
+            <FAQAccordion items={faqItems} showHeader={false} />
+          ) : (
+            <div className="rounded-3xl bg-[var(--color-cream-100)] p-10 text-center">
+              <h2 className="mb-4 font-serif text-3xl text-[var(--color-stone-800)]">
+                Раздел наполняется
+              </h2>
+              <p className="leading-relaxed text-[var(--color-stone-500)]">
+                Вопросы и ответы скоро появятся здесь. Пока можно написать мне напрямую, и я
+                подскажу всё, что важно именно для вашей ситуации.
+              </p>
+            </div>
+          )}
         </div>
       </section>
 
-      {/* CTA */}
       <CTASection
         variant="cream"
         title="Не нашли ответа?"
-        subtitle="Напишите мне напрямую — отвечу на любой вопрос."
-        primaryBtn={{ label: 'Написать', href: '/contact' }}
+        subtitle="Напишите мне напрямую, и я помогу разобраться с любым вопросом о формате работы, записи и первой встрече."
+        primaryBtn={{ label: 'Связаться', href: '/contact' }}
         showContacts
       />
     </>

@@ -1,5 +1,5 @@
 import { Button } from '@/components/ui/Button'
-import { SITE_CONFIG } from '@/lib/constants'
+import { getContent } from '@/lib/content'
 
 interface CTASectionProps {
   title?: string
@@ -42,6 +42,23 @@ export function CTASection({
     dark: 'text-[var(--color-stone-400)]',
   }[variant]
 
+  let contacts = {
+    telegram: '',
+    whatsapp: '',
+    phone: '',
+  }
+
+  try {
+    const content = getContent()
+    contacts = {
+      telegram: content.contacts.telegram,
+      whatsapp: content.contacts.whatsapp,
+      phone: content.contacts.phone,
+    }
+  } catch { /* fallback */ }
+
+  const hasContacts = contacts.telegram || contacts.whatsapp || contacts.phone
+
   return (
     <section className={`${bgClass} py-20 px-4`} aria-labelledby="cta-title">
       <div className="max-w-3xl mx-auto text-center">
@@ -75,33 +92,43 @@ export function CTASection({
           )}
         </div>
 
-        {showContacts && (
+        {showContacts && hasContacts && (
           <p className={`mt-8 text-sm ${contactClass}`}>
             Или напишите напрямую:{' '}
-            <a
-              href={SITE_CONFIG.telegram}
-              target="_blank"
-              rel="noopener noreferrer"
-              className={`underline underline-offset-3 hover:no-underline transition-all`}
-            >
-              Telegram
-            </a>{' '}
-            ·{' '}
-            <a
-              href={SITE_CONFIG.whatsapp}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="underline underline-offset-3 hover:no-underline transition-all"
-            >
-              WhatsApp
-            </a>{' '}
-            ·{' '}
-            <a
-              href={`tel:${SITE_CONFIG.phone}`}
-              className="underline underline-offset-3 hover:no-underline transition-all"
-            >
-              {SITE_CONFIG.phone}
-            </a>
+            {contacts.telegram && (
+              <>
+                <a
+                  href={contacts.telegram}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="underline underline-offset-3 hover:no-underline transition-all"
+                >
+                  Telegram
+                </a>
+                {(contacts.whatsapp || contacts.phone) && ' · '}
+              </>
+            )}
+            {contacts.whatsapp && (
+              <>
+                <a
+                  href={contacts.whatsapp}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="underline underline-offset-3 hover:no-underline transition-all"
+                >
+                  WhatsApp
+                </a>
+                {contacts.phone && ' · '}
+              </>
+            )}
+            {contacts.phone && (
+              <a
+                href={`tel:${contacts.phone}`}
+                className="underline underline-offset-3 hover:no-underline transition-all"
+              >
+                {contacts.phone}
+              </a>
+            )}
           </p>
         )}
       </div>

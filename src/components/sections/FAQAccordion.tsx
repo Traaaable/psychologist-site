@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { SectionHeader } from '@/components/ui/SectionHeader'
 
 interface FAQItem {
-  id: number
+  id: string | number
   question: string
   answer: string
 }
@@ -26,9 +26,9 @@ export function FAQAccordion({
   showHeader = true,
   className = '',
 }: FAQAccordionProps) {
-  const [openId, setOpenId] = useState<number | null>(null)
+  const [openId, setOpenId] = useState<string | number | null>(null)
 
-  const toggle = (id: number) => {
+  const toggle = (id: string | number) => {
     setOpenId(openId === id ? null : id)
   }
 

@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { SERVICES } from '@/lib/constants'
+import { getContent } from '@/lib/content'
 import { SectionHeader } from '@/components/ui/SectionHeader'
 
 const iconMap: Record<string, React.ReactNode> = {
@@ -37,6 +37,14 @@ const iconMap: Record<string, React.ReactNode> = {
 }
 
 export function ServiceCards() {
+  const services = (() => {
+    try {
+      return getContent().services.filter(service => service.visible)
+    } catch {
+      return []
+    }
+  })()
+
   return (
     <section className="py-20 px-4 bg-white" aria-labelledby="services-heading">
       <div className="max-w-6xl mx-auto">
@@ -48,7 +56,7 @@ export function ServiceCards() {
         />
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-          {SERVICES.map((service) => (
+          {services.map((service) => (
             <Link
               key={service.id}
               href={`/services#${service.id}`}

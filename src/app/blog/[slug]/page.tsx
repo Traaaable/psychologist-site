@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import { Breadcrumbs } from '@/components/ui/Breadcrumbs'
 import { CTASection } from '@/components/sections/CTASection'
+import { getContent } from '@/lib/content'
 import { generatePageMetadata } from '@/lib/metadata'
 import type { BlogPost } from '@/types'
 
@@ -66,6 +67,12 @@ export default async function BlogPostPage({ params }: PageProps) {
     notFound()
   }
 
+  const content = getContent()
+  const authorName = content.specialist.name || content.specialist.shortName || 'Психолог'
+  const authorTitle = content.specialist.title || 'Психолог-консультант'
+  const authorExperience = content.specialist.experience
+  const publisherName = content.seo.siteName || authorName
+
   // Schema.org для статьи (SEO)
   const articleSchema = {
     '@context': 'https://schema.org',
@@ -75,11 +82,11 @@ export default async function BlogPostPage({ params }: PageProps) {
     datePublished: post.date,
     author: {
       '@type': 'Person',
-      name: 'Анна Соколова',
+      name: authorName,
     },
     publisher: {
       '@type': 'Organization',
-      name: 'Анна Соколова — психолог',
+      name: publisherName,
     },
   }
 
@@ -125,7 +132,7 @@ export default async function BlogPostPage({ params }: PageProps) {
                 <span className="text-[var(--color-stone-300)]">·</span>
                 <span>{post.readTime} чтения</span>
                 <span className="text-[var(--color-stone-300)]">·</span>
-                <span>Анна Соколова</span>
+                <span>{authorName}</span>
               </div>
             </div>
           </div>
@@ -147,9 +154,10 @@ export default async function BlogPostPage({ params }: PageProps) {
                 </svg>
               </div>
               <div>
-                <div className="font-semibold text-[var(--color-stone-800)]">Анна Соколова</div>
+                <div className="font-semibold text-[var(--color-stone-800)]">{authorName}</div>
                 <div className="text-sm text-[var(--color-stone-400)]">
-                  Психолог-консультант · 9 лет практики
+                  {authorTitle}
+                  {authorExperience ? ` · ${authorExperience}` : ''}
                 </div>
               </div>
             </div>
