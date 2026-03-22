@@ -45,80 +45,139 @@ export default async function HomePage() {
   return (
     <>
       {/* HERO */}
-      <section className="hero-gradient min-h-[90vh] flex items-center px-4 py-20 relative overflow-hidden">
+      <section className="hero-gradient min-h-[90vh] flex items-center px-4 py-16 md:py-24 relative overflow-hidden">
+        {/* Decorative Blurred Backgrounds */}
         <div className="absolute top-0 right-0 w-[600px] h-[600px] rounded-full opacity-[0.06] bg-[var(--color-sage-500)] blur-[120px] pointer-events-none" aria-hidden="true" />
         <div className="absolute bottom-0 left-0 w-[400px] h-[400px] rounded-full opacity-[0.05] bg-[var(--color-accent)] blur-[100px] pointer-events-none" aria-hidden="true" />
+        
+        {/* Subtle Pattern */}
+        <div className="absolute inset-0 opacity-[0.02]" style={{
+          backgroundImage: `radial-gradient(circle at 1px 1px, rgb(120 113 108) 1px, transparent 0)`,
+          backgroundSize: '50px 50px'
+        }} aria-hidden="true" />
 
-        <div className="max-w-6xl mx-auto w-full">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
-            <div className="order-2 lg:order-1">
-              <div className="inline-flex items-center gap-2 bg-[var(--color-sage-100)] text-[var(--color-sage-700)] px-4 py-2 rounded-full text-sm font-medium mb-8">
-                <span className="w-1.5 h-1.5 bg-[var(--color-sage-500)] rounded-full" />
-                {formatLabel}{location.city ? ` · ${location.city}` : ''}
+        <div className="max-w-6xl mx-auto w-full relative z-10">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+            {/* LEFT COLUMN - CONTENT */}
+            <div className="order-2 lg:order-1 space-y-8">
+              {/* Accent Line */}
+              <div className="flex items-center gap-3">
+                <div className="h-1 w-8 bg-gradient-to-r from-[var(--color-sage-500)] to-[var(--color-sage-300)] rounded-full" aria-hidden="true" />
+                <span className="text-xs uppercase tracking-widest font-semibold text-[var(--color-sage-600)]">Психологическая поддержка</span>
               </div>
 
-              <h1 className="font-serif text-5xl md:text-6xl lg:text-7xl text-[var(--color-stone-800)] leading-[1.1] mb-7">
-                {specialist.heroText || 'Пространство, где можно быть собой'}
-              </h1>
-
-              <p className="text-lg text-[var(--color-stone-500)] leading-relaxed mb-10 max-w-md">
-                {specialist.heroSubtitle}
-              </p>
-
-              <div className="flex flex-col sm:flex-row gap-4">
-                <Button href="/contact" size="lg">Записаться на консультацию</Button>
-                <Button href="/about" variant="secondary" size="lg">Узнать обо мне</Button>
+              {/* Status Badge */}
+              <div className="inline-flex items-center gap-2.5 bg-white bg-opacity-50 backdrop-blur-md text-[var(--color-sage-700)] px-5 py-3 rounded-full text-sm font-medium border border-[var(--color-sage-200)] border-opacity-50 shadow-sm">
+                <span className="w-2 h-2 bg-[var(--color-sage-500)] rounded-full animate-pulse" />
+                <span>{formatLabel}</span>
+                {location.city && <span className="text-[var(--color-stone-400)]">·</span>}
+                {location.city && <span>{location.city}</span>}
               </div>
 
-              <div className="flex flex-wrap gap-8 mt-12 pt-10 border-t border-[var(--color-stone-200)]">
+              {/* Main Heading */}
+              <div className="space-y-4">
+                <h1 className="font-serif text-5xl md:text-6xl lg:text-7xl text-[var(--color-stone-800)] leading-[1.05] tracking-tight">
+                  {specialist.heroText || 'Пространство, где можно быть собой'}
+                </h1>
+                
+                {/* Subtitle */}
+                <p className="text-lg md:text-xl text-[var(--color-stone-500)] leading-relaxed max-w-xl font-light">
+                  {specialist.heroSubtitle}
+                </p>
+              </div>
+
+              {/* Trust Indicators - Before CTAs */}
+              <div className="grid grid-cols-3 gap-4 py-2 max-w-sm">
                 {specialist.experience && (
-                  <div>
-                    <div className="font-serif text-3xl text-[var(--color-stone-800)]">{specialist.experience}</div>
-                    <div className="text-sm text-[var(--color-stone-400)] mt-0.5">опыта работы</div>
+                  <div className="text-center">
+                    <div className="font-serif text-2xl md:text-3xl text-[var(--color-accent)] font-semibold">{specialist.experience}</div>
+                    <div className="text-xs text-[var(--color-stone-400)] mt-1 leading-snug">лет опыта</div>
                   </div>
                 )}
                 {specialist.sessionsCount && (
-                  <div>
-                    <div className="font-serif text-3xl text-[var(--color-stone-800)]">{specialist.sessionsCount}</div>
-                    <div className="text-sm text-[var(--color-stone-400)] mt-0.5">консультаций проведено</div>
+                  <div className="text-center">
+                    <div className="font-serif text-2xl md:text-3xl text-[var(--color-accent)] font-semibold">{specialist.sessionsCount}</div>
+                    <div className="text-xs text-[var(--color-stone-400)] mt-1 leading-snug">сессий</div>
                   </div>
                 )}
-                <div>
-                  <div className="font-serif text-3xl text-[var(--color-stone-800)]">
-                    {location.consultationFormat === 'both' ? 'Онлайн + очно' :
-                     location.consultationFormat === 'online' ? 'Онлайн' : 'Очно'}
+                <div className="text-center">
+                  <div className="font-serif text-lg md:text-xl text-[var(--color-accent)] font-semibold">
+                    {location.consultationFormat === 'both' ? '2' :
+                     location.consultationFormat === 'online' ? '1' : '1'}
                   </div>
-                  <div className="text-sm text-[var(--color-stone-400)] mt-0.5">формат работы</div>
+                  <div className="text-xs text-[var(--color-stone-400)] mt-1 leading-snug">
+                    {location.consultationFormat === 'both' ? 'формата' : 'формат'}
+                  </div>
+                </div>
+              </div>
+
+              {/* CTA Buttons */}
+              <div className="flex flex-col sm:flex-row gap-3 pt-6">
+                <Button href="/contact" size="lg" className="shadow-lg shadow-[var(--color-accent)]/10 hover:shadow-xl hover:shadow-[var(--color-accent)]/20 transition-all duration-300">
+                  Записаться на консультацию
+                </Button>
+                <Button href="/about" variant="secondary" size="lg" className="border-2 border-[var(--color-stone-200)] hover:border-[var(--color-sage-400)] transition-colors duration-300">
+                  Узнать обо мне
+                </Button>
+              </div>
+
+              {/* Trust Line */}
+              <div className="pt-4 border-t border-[var(--color-stone-200)]">
+                <div className="flex flex-col sm:flex-row sm:items-center gap-4 text-sm">
+                  <div className="flex items-center gap-2">
+                    <svg className="w-4 h-4 text-[var(--color-sage-500)]" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                    </svg>
+                    <span className="text-[var(--color-stone-600)]">Конфиденциально и безопасно</span>
+                  </div>
+                  <span className="hidden sm:inline text-[var(--color-stone-300)]">·</span>
+                  <div className="flex items-center gap-2">
+                    <svg className="w-4 h-4 text-[var(--color-sage-500)]" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                    </svg>
+                    <span className="text-[var(--color-stone-600)]">Персональный подход</span>
+                  </div>
                 </div>
               </div>
             </div>
 
-            {/* Фото */}
+            {/* RIGHT COLUMN - IMAGE WITH PREMIUM CARD */}
             <div className="order-1 lg:order-2 flex justify-center lg:justify-end">
-              <div className="relative">
-                <div className="absolute -inset-3 bg-[var(--color-sage-200)] rounded-3xl opacity-50 blur-sm" />
-                <div className="relative w-72 h-96 md:w-96 md:h-[500px] rounded-3xl overflow-hidden bg-[var(--color-cream-200)]">
-                  {specialist.photo ? (
-                    <img src={specialist.photo} alt={specialist.name} className="w-full h-full object-cover object-top" />
-                  ) : (
-                    <div className="absolute inset-0 flex flex-col items-center justify-center text-[var(--color-stone-400)]">
-                      <svg className="w-16 h-16 mb-4 opacity-40" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1}>
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                      </svg>
-                      <p className="text-sm opacity-50">Фото специалиста</p>
-                    </div>
-                  )}
+              <div className="relative w-full max-w-md">
+                {/* Accent Shadow */}
+                <div className="absolute -inset-4 bg-gradient-to-br from-[var(--color-sage-300)] to-[var(--color-cream-200)] rounded-3xl opacity-30 blur-2xl" aria-hidden="true" />
+                
+                {/* Premium Card Container */}
+                <div className="relative">
+                  {/* Main Image Card */}
+                  <div className="relative w-full aspect-[3/4] md:aspect-[5/7] rounded-3xl overflow-hidden bg-[var(--color-cream-200)] shadow-lg border border-[var(--color-stone-100)] border-opacity-50">
+                    {specialist.photo ? (
+                      <img src={specialist.photo} alt={specialist.name} className="w-full h-full object-cover object-top" />
+                    ) : (
+                      <div className="absolute inset-0 flex flex-col items-center justify-center text-[var(--color-stone-400)]">
+                        <svg className="w-16 h-16 mb-4 opacity-40" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                        </svg>
+                        <p className="text-sm opacity-50">Фото специалиста</p>
+                      </div>
+                    )}
+                    
+                    {/* Overlay Gradient */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-[var(--color-stone-900)] via-transparent to-transparent opacity-0 hover:opacity-20 transition-opacity duration-300" aria-hidden="true" />
+                  </div>
                 </div>
-                <div className="absolute -bottom-4 -left-6 bg-white rounded-2xl px-5 py-4 shadow-[var(--shadow-card)] border border-[var(--color-stone-100)]">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-[var(--color-sage-100)] rounded-xl flex items-center justify-center flex-shrink-0">
-                      <svg className="w-5 h-5 text-[var(--color-sage-600)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+
+                {/* Floating Badge - Trust Indicator */}
+                <div className="absolute -bottom-5 -left-3 md:-bottom-6 md:-left-4 bg-white rounded-2xl px-4 md:px-5 py-3 md:py-4 shadow-[var(--shadow-card)] border border-[var(--color-stone-100)] backdrop-blur-sm">
+                  <div className="flex items-start gap-3">
+                    <div className="w-10 h-10 bg-gradient-to-br from-[var(--color-sage-100)] to-[var(--color-cream-100)] rounded-lg flex items-center justify-center flex-shrink-0 shadow-sm">
+                      <svg className="w-5 h-5 text-[var(--color-sage-600)]" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M9 6a3 3 0 11-6 0 3 3 0 016 0zm-9 9a9 9 0 1118 0 9 9 0 01-18 0zm13.7-4.3a1 1 0 00-1.4-1.4L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                       </svg>
                     </div>
                     <div>
-                      <div className="text-xs font-semibold text-[var(--color-stone-700)]">Конфиденциально</div>
-                      <div className="text-xs text-[var(--color-stone-400)]">Все сессии строго приватны</div>
+                      <div className="font-semibold text-[var(--color-stone-700)] text-sm">Конфиденциально</div>
+                      <div className="text-xs text-[var(--color-stone-400)] mt-0.5">Данные защищены</div>
                     </div>
                   </div>
                 </div>

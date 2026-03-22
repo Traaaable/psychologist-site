@@ -15,18 +15,36 @@ export default function HowItWorksPage() {
   return (
     <>
       {/* HERO */}
-      <section className="bg-[var(--color-sage-100)] pt-10 pb-16 px-4">
-        <div className="max-w-6xl mx-auto">
+      <section className="bg-[var(--color-sage-100)] relative overflow-hidden py-16 md:py-24 px-4">
+        {/* Decorative Elements */}
+        <div className="absolute top-0 right-0 w-[500px] h-[500px] rounded-full opacity-[0.04] bg-[var(--color-sage-500)] blur-[120px] pointer-events-none" aria-hidden="true" />
+        <div className="absolute bottom-0 left-0 w-[400px] h-[400px] rounded-full opacity-[0.03] bg-[var(--color-accent)] blur-[100px] pointer-events-none" aria-hidden="true" />
+        
+        <div className="max-w-6xl mx-auto relative z-10">
           <Breadcrumbs
             items={[{ label: 'Главная', href: '/' }, { label: 'Как проходят консультации' }]}
             className="mb-8"
           />
-          <div className="max-w-3xl">
-            <span className="badge badge-sage mb-5 inline-block">Консультации</span>
-            <h1 className="font-serif text-5xl md:text-6xl text-[var(--color-stone-800)] leading-tight mb-6">
+          <div className="max-w-3xl space-y-6">
+            {/* Accent Line */}
+            <div className="flex items-center gap-3">
+              <div className="h-1 w-8 bg-gradient-to-r from-[var(--color-sage-500)] to-[var(--color-sage-300)] rounded-full" aria-hidden="true" />
+              <span className="text-xs uppercase tracking-widest font-semibold text-[var(--color-sage-600)]">Как это работает</span>
+            </div>
+
+            {/* Badge */}
+            <div className="inline-flex items-center gap-2.5 bg-white bg-opacity-50 backdrop-blur-md text-[var(--color-sage-700)] px-5 py-3 rounded-full text-sm font-medium border border-[var(--color-sage-200)] border-opacity-50 shadow-sm">
+              <span className="w-2 h-2 bg-[var(--color-sage-500)] rounded-full animate-pulse" />
+              <span>Процесс консультаций</span>
+            </div>
+
+            {/* Heading */}
+            <h1 className="font-serif text-5xl md:text-6xl lg:text-7xl text-[var(--color-stone-800)] leading-[1.05] tracking-tight">
               Как проходят консультации
             </h1>
-            <p className="text-xl text-[var(--color-stone-500)] leading-relaxed">
+            
+            {/* Subtitle */}
+            <p className="text-lg md:text-xl text-[var(--color-stone-500)] leading-relaxed font-light max-w-2xl">
               Понятно и честно — о том, чего ожидать от первой встречи и от работы в целом.
             </p>
           </div>

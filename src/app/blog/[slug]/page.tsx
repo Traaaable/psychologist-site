@@ -92,8 +92,12 @@ export default async function BlogPostPage({ params }: PageProps) {
 
       <article>
         {/* HERO */}
-        <header className="bg-[var(--color-cream-100)] pt-10 pb-16 px-4">
-          <div className="max-w-3xl mx-auto">
+        <header className="bg-[var(--color-cream-100)] relative overflow-hidden py-16 md:py-24 px-4">
+          {/* Decorative Elements */}
+          <div className="absolute top-0 right-0 w-[500px] h-[500px] rounded-full opacity-[0.04] bg-[var(--color-sage-500)] blur-[120px] pointer-events-none" aria-hidden="true" />
+          <div className="absolute bottom-0 left-0 w-[400px] h-[400px] rounded-full opacity-[0.03] bg-[var(--color-accent)] blur-[100px] pointer-events-none" aria-hidden="true" />
+
+          <div className="max-w-3xl mx-auto relative z-10">
             <Breadcrumbs
               items={[
                 { label: 'Главная', href: '/' },
@@ -102,16 +106,27 @@ export default async function BlogPostPage({ params }: PageProps) {
               ]}
               className="mb-8"
             />
-            <div className="badge badge-sage mb-5 inline-block">{post.category}</div>
-            <h1 className="font-serif text-4xl md:text-5xl text-[var(--color-stone-800)] leading-tight mb-6">
-              {post.title}
-            </h1>
-            <div className="flex items-center gap-4 text-sm text-[var(--color-stone-400)]">
-              <span>{post.date}</span>
-              <span>·</span>
-              <span>{post.readTime} чтения</span>
-              <span>·</span>
-              <span>Анна Соколова</span>
+            
+            <div className="space-y-6">
+              {/* Category Badge */}
+              <div className="inline-flex items-center gap-2.5 bg-white bg-opacity-50 backdrop-blur-md text-[var(--color-sage-700)] px-5 py-3 rounded-full text-sm font-medium border border-[var(--color-sage-200)] border-opacity-50 shadow-sm">
+                <span className="w-2 h-2 bg-[var(--color-sage-500)] rounded-full" />
+                <span>{post.category}</span>
+              </div>
+
+              {/* Heading */}
+              <h1 className="font-serif text-4xl md:text-5xl lg:text-6xl text-[var(--color-stone-800)] leading-[1.1] tracking-tight">
+                {post.title}
+              </h1>
+
+              {/* Meta Information */}
+              <div className="flex flex-wrap items-center gap-4 text-sm text-[var(--color-stone-500)]">
+                <span className="font-medium">{post.date}</span>
+                <span className="text-[var(--color-stone-300)]">·</span>
+                <span>{post.readTime} чтения</span>
+                <span className="text-[var(--color-stone-300)]">·</span>
+                <span>Анна Соколова</span>
+              </div>
             </div>
           </div>
         </header>

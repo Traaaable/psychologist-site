@@ -16,31 +16,55 @@ export default function AboutPage() {
   return (
     <>
       {/* HERO */}
-      <section className="bg-[var(--color-cream-100)] pt-10 pb-16 px-4">
-        <div className="max-w-6xl mx-auto">
+      <section className="bg-[var(--color-cream-100)] relative overflow-hidden py-16 md:py-24 px-4">
+        {/* Decorative Elements */}
+        <div className="absolute top-0 right-0 w-[500px] h-[500px] rounded-full opacity-[0.04] bg-[var(--color-sage-500)] blur-[120px] pointer-events-none" aria-hidden="true" />
+        <div className="absolute bottom-0 left-0 w-[400px] h-[400px] rounded-full opacity-[0.03] bg-[var(--color-accent)] blur-[100px] pointer-events-none" aria-hidden="true" />
+        
+        <div className="max-w-6xl mx-auto relative z-10">
           <Breadcrumbs
             items={[{ label: 'Главная', href: '/' }, { label: 'Обо мне' }]}
             className="mb-8"
           />
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
             {/* Текст */}
-            <div>
-              <span className="badge badge-sage mb-5 inline-block">Психолог</span>
-              <h1 className="font-serif text-5xl md:text-6xl text-[var(--color-stone-800)] leading-tight mb-6">
+            <div className="space-y-6">
+              {/* Accent Line */}
+              <div className="flex items-center gap-3">
+                <div className="h-1 w-8 bg-gradient-to-r from-[var(--color-sage-500)] to-[var(--color-sage-300)] rounded-full" aria-hidden="true" />
+                <span className="text-xs uppercase tracking-widest font-semibold text-[var(--color-sage-600)]">О специалисте</span>
+              </div>
+
+              {/* Badge */}
+              <div className="inline-flex items-center gap-2.5 bg-white bg-opacity-50 backdrop-blur-md text-[var(--color-sage-700)] px-5 py-3 rounded-full text-sm font-medium border border-[var(--color-sage-200)] border-opacity-50 shadow-sm">
+                <span className="w-2 h-2 bg-[var(--color-sage-500)] rounded-full animate-pulse" />
+                <span>Психолог</span>
+              </div>
+
+              {/* Heading */}
+              <h1 className="font-serif text-5xl md:text-6xl lg:text-7xl text-[var(--color-stone-800)] leading-[1.05] tracking-tight">
                 Анна Соколова
               </h1>
-              <p className="text-xl text-[var(--color-sage-600)] font-light mb-6 italic font-serif">
+
+              {/* Tagline */}
+              <p className="text-lg md:text-xl text-[var(--color-sage-600)] font-light italic font-serif">
                 Психолог-консультант, гештальт-терапевт
               </p>
-              <p className="text-[var(--color-stone-500)] text-lg leading-relaxed mb-8">
+
+              {/* Description */}
+              <p className="text-lg text-[var(--color-stone-500)] leading-relaxed font-light max-w-2xl">
                 Помогаю взрослым людям справляться с трудностями, лучше понимать себя и находить
                 опору в сложных жизненных ситуациях. Работаю с тревогой, выгоранием, кризисами,
                 самооценкой и отношениями.
               </p>
-              <div className="flex flex-wrap gap-4">
-                <Button href="/contact">Записаться на консультацию</Button>
-                <Button href="/how-it-works" variant="secondary">
+
+              {/* CTA Buttons */}
+              <div className="flex flex-col sm:flex-row gap-3 pt-3">
+                <Button href="/contact" size="lg" className="shadow-lg shadow-[var(--color-accent)]/10 hover:shadow-xl hover:shadow-[var(--color-accent)]/20 transition-all duration-300">
+                  Записаться на консультацию
+                </Button>
+                <Button href="/how-it-works" variant="secondary" size="lg" className="border-2 border-[var(--color-stone-200)] hover:border-[var(--color-sage-400)] transition-colors duration-300">
                   Как проходят сессии
                 </Button>
               </div>
@@ -48,16 +72,21 @@ export default function AboutPage() {
 
             {/* Фото */}
             <div className="relative flex justify-center lg:justify-end">
-              <div className="relative w-80 h-[460px] rounded-3xl bg-[var(--color-cream-200)] overflow-hidden">
-                <div className="absolute inset-0 flex items-center justify-center text-[var(--color-stone-300)]">
-                  <svg className="w-20 h-20" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={0.8}>
+              {/* Accent Shadow */}
+              <div className="absolute -inset-4 bg-gradient-to-br from-[var(--color-sage-300)] to-[var(--color-cream-200)] rounded-3xl opacity-30 blur-2xl" aria-hidden="true" />
+              
+              <div className="relative w-80 h-[460px] rounded-3xl bg-[var(--color-cream-200)] overflow-hidden shadow-lg border border-[var(--color-stone-100)] border-opacity-50">
+                <div className="absolute inset-0 flex items-center justify-center text-[var(--color-stone-400)]">
+                  <svg className="w-20 h-20" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={0.8} opacity="60">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                   </svg>
                 </div>
               </div>
-              <div className="absolute -bottom-3 -right-3 bg-white rounded-2xl px-5 py-4 shadow-[var(--shadow-card)] border border-[var(--color-stone-100)]">
-                <div className="text-2xl font-serif text-[var(--color-stone-800)]">{SITE_CONFIG.experience}</div>
-                <div className="text-xs text-[var(--color-stone-400)]">опыта работы</div>
+
+              {/* Experience Badge */}
+              <div className="absolute -bottom-5 -right-3 md:-bottom-6 md:-right-4 bg-white rounded-2xl px-4 md:px-5 py-3 md:py-4 shadow-[var(--shadow-card)] border border-[var(--color-stone-100)] backdrop-blur-sm">
+                <div className="font-serif text-2xl md:text-3xl text-[var(--color-accent)] font-semibold">{SITE_CONFIG.experience}</div>
+                <div className="text-xs text-[var(--color-stone-400)] mt-0.5">опыта работы</div>
               </div>
             </div>
           </div>
