@@ -1,4 +1,5 @@
 import type { MetadataRoute } from 'next'
+import { getPublishedBlogPosts } from '@/lib/blog'
 import { getContent } from '@/lib/content'
 
 export const dynamic = 'force-dynamic'
@@ -7,6 +8,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const content = getContent()
   const baseUrl = content.seo.siteUrl || 'http://localhost:3000'
   const lastModified = new Date(content._meta.lastUpdated || Date.now())
+  const blogPosts = getPublishedBlogPosts(content)
 
   return [
     {
@@ -57,6 +59,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: 'weekly',
       priority: 0.7,
     },
+    ...blogPosts.map((post) => ({
+      url: `${baseUrl}/blog/${post.slug}`,
+      lastModified: new Date(post.updatedAt || post.publishedAt || content._meta.lastUpdated || Date.now()),
+      changeFrequency: 'monthly' as const,
+      priority: 0.8,
+    })),
     {
       url: `${baseUrl}/privacy`,
       lastModified,

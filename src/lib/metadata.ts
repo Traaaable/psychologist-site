@@ -13,6 +13,11 @@ function getSiteUrl() {
   return getMetadataSource()?.seo.siteUrl || 'http://localhost:3000'
 }
 
+function getAbsoluteUrl(path: string) {
+  const siteUrl = getSiteUrl()
+  return `${siteUrl}${path}`
+}
+
 function getBrandName() {
   const content = getMetadataSource()
 
@@ -30,37 +35,52 @@ export function generatePageMetadata({
   path,
   pageKey,
   image,
+  openGraphType = 'website',
+  publishedTime,
+  modifiedTime,
+  keywords,
+  robots,
 }: {
   title: string
   description: string
   path: string
   pageKey?: string
   image?: string
+  openGraphType?: 'website' | 'article'
+  publishedTime?: string
+  modifiedTime?: string
+  keywords?: string[]
+  robots?: Metadata['robots']
 }): Metadata {
   const content = getMetadataSource()
-  const siteUrl = getSiteUrl()
   const brandName = getBrandName()
   const seoPage = pageKey ? content?.seo.pages?.[pageKey] : undefined
   const resolvedTitle = seoPage?.title || title
   const resolvedDescription =
     seoPage?.description || description || content?.seo.defaultDescription || ''
-  const url = `${siteUrl}${path}`
-  const ogImage = image || '/og-image.jpg'
+  const url = getAbsoluteUrl(path)
 
   return {
     title: resolvedTitle,
     description: resolvedDescription,
+    keywords,
+    robots,
     alternates: { canonical: url },
     openGraph: {
+      type: openGraphType,
       title: `${resolvedTitle} | ${brandName}`,
       description: resolvedDescription,
       url,
-      images: [{ url: ogImage, width: 1200, height: 630 }],
+      ...(publishedTime ? { publishedTime } : {}),
+      ...(modifiedTime ? { modifiedTime } : {}),
+      ...(image ? { images: [{ url: image, width: 1200, height: 630 }] } : {}),
     },
     twitter: {
       title: `${resolvedTitle} | ${brandName}`,
       description: resolvedDescription,
-      images: [ogImage],
+      ...(image ? { images: [image] } : {}),
     },
   }
 }
+
+export { getAbsoluteUrl }

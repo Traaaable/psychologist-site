@@ -1,10 +1,13 @@
 import type { Metadata } from 'next'
+import Link from 'next/link'
+import { BlogCard } from '@/components/blog/BlogCard'
 import { getContent, getConsultationFormatLabel } from '@/lib/content'
 import { Button } from '@/components/ui/Button'
 import { CTASection } from '@/components/sections/CTASection'
 import { ContactForm } from '@/components/sections/ContactForm'
 import { SectionHeader } from '@/components/ui/SectionHeader'
 import { FAQAccordion } from '@/components/sections/FAQAccordion'
+import { getPublishedBlogPosts } from '@/lib/blog'
 
 // Иконки для услуг
 const ICON_MAP: Record<string, React.ReactNode> = {
@@ -35,6 +38,7 @@ export default async function HomePage() {
   const visibleServices = services.filter(s => s.visible)
   const visibleFaq = faq.filter(f => f.visible).map((f, i) => ({ ...f, id: i + 1 }))
   const visiblePricing = pricing.filter(p => p.visible)
+  const latestPosts = getPublishedBlogPosts(content).slice(0, 3)
 
   const locationDisplay = location.showAddress && location.address
     ? `${location.city}, ${location.address}`
@@ -202,6 +206,29 @@ export default async function HomePage() {
                   <h3 className="font-semibold text-[var(--color-stone-800)] text-lg mb-2">{service.title}</h3>
                   <p className="text-[var(--color-stone-500)] text-sm leading-relaxed">{service.shortDesc}</p>
                 </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {latestPosts.length > 0 && (
+        <section className="py-20 px-4 bg-white">
+          <div className="max-w-6xl mx-auto">
+            <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between mb-12">
+              <SectionHeader
+                label="Блог"
+                title="Полезные статьи для знакомства с темой"
+                subtitle="Материалы, которые помогают лучше понять свое состояние и перейти к осмысленному следующему шагу."
+                className="mb-0"
+              />
+              <Link href="/blog" className="btn-secondary self-start md:self-auto">
+                Перейти в блог
+              </Link>
+            </div>
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
+              {latestPosts.map((post) => (
+                <BlogCard key={post.id} post={post} />
               ))}
             </div>
           </div>

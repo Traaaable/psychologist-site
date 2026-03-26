@@ -1,4 +1,5 @@
 import { isAuthenticated } from '@/lib/auth'
+import { getPublishedBlogPosts } from '@/lib/blog'
 import { redirect } from 'next/navigation'
 import { getContent } from '@/lib/content'
 import { AdminShell } from '@/components/admin/AdminShell'
@@ -13,6 +14,7 @@ export default async function AdminDashboard() {
   }
 
   const content = getContent()
+  const publishedPosts = getPublishedBlogPosts(content)
   logInfo('admin.dashboard.rendered', {
     specialistName: content.specialist.shortName || content.specialist.name || 'Психолог',
     lastUpdated: content._meta.lastUpdated,
@@ -65,6 +67,14 @@ export default async function AdminDashboard() {
       desc: 'Часто задаваемые вопросы',
       status: `${content.faq.filter(f => f.visible).length} вопрос(а)`,
       icon: '❓',
+      urgent: false,
+    },
+    {
+      href: '/admin/blog',
+      title: 'Блог и статьи',
+      desc: 'SEO-статьи, черновики, переходы на услуги',
+      status: `${publishedPosts.length} опубликовано • ${content.blog.posts.filter(post => post.status === 'draft').length} черновик(ов)`,
+      icon: '📝',
       urgent: false,
     },
     {

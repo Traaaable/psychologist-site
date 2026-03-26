@@ -8,6 +8,11 @@
 import fs from 'fs'
 import path from 'path'
 import { logDebug, logError, logInfo } from '@/lib/logger'
+import {
+  createEmptyBlogSection,
+  normalizeBlogSection,
+  type BlogSection,
+} from '@/lib/blog-schema'
 
 const DEFAULT_DATA_FILE = path.join(process.cwd(), 'data', 'content.json')
 
@@ -117,9 +122,28 @@ export interface SiteContent {
     defaultDescription: string
     pages: Record<string, { title: string; description: string }>
   }
+  blog: BlogSection
   _meta: {
     lastUpdated: string
     version: string
+  }
+}
+
+function normalizeContent(content: SiteContent): SiteContent {
+  return {
+    ...content,
+    seo: {
+      ...content.seo,
+      pages: {
+        ...content.seo.pages,
+        blog: content.seo.pages?.blog || {
+          title: 'Блог психолога',
+          description:
+            'Статьи о тревоге, выгорании, отношениях и самопомощи от практикующего психолога.',
+        },
+      },
+    },
+    blog: normalizeBlogSection(content.blog || createEmptyBlogSection()),
   }
 }
 
@@ -158,7 +182,8 @@ export function getContent(): SiteContent {
     ensureContentFileExists()
     logDebug('content.read.start', { file: DATA_FILE })
     const raw = fs.readFileSync(DATA_FILE, 'utf-8')
-    const content = JSON.parse(raw) as SiteContent
+    const parsed = JSON.parse(raw) as SiteContent
+    const content = normalizeContent(parsed)
     logDebug('content.read.success', {
       file: DATA_FILE,
       sizeBytes: Buffer.byteLength(raw, 'utf-8'),
@@ -179,6 +204,8 @@ export function getContent(): SiteContent {
 export function saveContent(data: SiteContent): void {
   // Обновляем метаданные
   data._meta.lastUpdated = new Date().toISOString()
+  const normalized = normalizeContent(data)
+  normalized._meta.lastUpdated = data._meta.lastUpdated
 
   // Создаём папку, если не существует
   const dir = path.dirname(DATA_FILE)
@@ -188,15 +215,15 @@ export function saveContent(data: SiteContent): void {
 
   // Атомарная запись: сначала во временный файл, потом переименовываем
   const tmpFile = DATA_FILE + '.tmp'
-  const serialized = JSON.stringify(data, null, 2)
+  const serialized = JSON.stringify(normalized, null, 2)
   fs.writeFileSync(tmpFile, serialized, 'utf-8')
   fs.renameSync(tmpFile, DATA_FILE)
 
   logInfo('content.write.success', {
     file: DATA_FILE,
     sizeBytes: Buffer.byteLength(serialized, 'utf-8'),
-    version: data._meta.version,
-    lastUpdated: data._meta.lastUpdated,
+    version: normalized._meta.version,
+    lastUpdated: normalized._meta.lastUpdated,
   })
 }
 

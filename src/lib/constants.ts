@@ -23,6 +23,7 @@ export const SITE_CONFIG = {
 export const NAV_LINKS = [
   { href: '/about', label: 'Обо мне' },
   { href: '/services', label: 'С чем я работаю' },
+  { href: '/blog', label: 'Блог' },
   { href: '/how-it-works', label: 'Консультации' },
   { href: '/pricing', label: 'Стоимость' },
   { href: '/faq', label: 'Вопросы' },

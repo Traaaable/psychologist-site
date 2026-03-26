@@ -1,44 +1,24 @@
 import type { Metadata } from 'next'
-import { notFound } from 'next/navigation'
 import Link from 'next/link'
-import { Breadcrumbs } from '@/components/ui/Breadcrumbs'
+import { notFound } from 'next/navigation'
+import { BlogBlocks } from '@/components/blog/BlogBlocks'
+import { BlogCard } from '@/components/blog/BlogCard'
 import { CTASection } from '@/components/sections/CTASection'
+import { Breadcrumbs } from '@/components/ui/Breadcrumbs'
+import {
+  getBlogPostBySlug,
+  getBlogPostMetadataDescription,
+  getBlogPostMetadataTitle,
+  getPrimaryBlogCta,
+  getPublishedBlogPosts,
+  getRelatedBlogPosts,
+  getRelatedPageLinks,
+  getRelatedServiceLinks,
+  resolveBlogImageUrl,
+} from '@/lib/blog'
+import { formatBlogDate, getBlogReadTime } from '@/lib/blog-utils'
 import { getContent } from '@/lib/content'
 import { generatePageMetadata } from '@/lib/metadata'
-import type { BlogPost } from '@/types'
-
-// Демо-данные — в продакшн замените на загрузку из CMS/файловой системы
-const POSTS: Record<string, BlogPost & { content: string }> = {
-  'chto-takoe-trevoga': {
-    slug: 'chto-takoe-trevoga',
-    title: 'Что такое тревога и почему она появляется',
-    excerpt: 'Тревога — это нормальная реакция психики на угрозу. Но когда она становится хронической, она перестаёт помогать и начинает мешать.',
-    date: '10 марта 2026',
-    readTime: '6 мин',
-    category: 'Тревога',
-    content: `
-      <p>Тревога — это сигнал. Эволюционно она возникала, чтобы предупредить нас об опасности: заставить убежать от хищника или лучше подготовиться к сложной ситуации. В этом смысле тревога — наш союзник.</p>
-
-      <h2>Когда тревога становится проблемой?</h2>
-
-      <p>Проблема начинается тогда, когда сигнализация срабатывает постоянно — даже в отсутствие реальной угрозы. Когда вы тревожитесь о том, что не случилось, и, возможно, никогда не случится. Когда тревога мешает жить: принимать решения, общаться, работать, отдыхать.</p>
-
-      <p>Хроническая тревога — это не слабость характера. Это состояние, которое формируется под влиянием многих факторов: наследственности, раннего опыта, длительного стресса, привычки катастрофизировать.</p>
-
-      <h2>Как работает тревожный цикл?</h2>
-
-      <p>Большинство тревожных реакций работают по замкнутому кругу: тревожная мысль → физическое напряжение → поведение избегания → временное облегчение → новая тревожная мысль.</p>
-
-      <p>Когда мы избегаем того, что тревожит — например, не звоним по важному делу или не идём на вечеринку — тревога на короткое время снижается. Но долгосрочно это только укрепляет убеждение, что ситуация опасна.</p>
-
-      <h2>Что можно сделать?</h2>
-
-      <p>Хорошая новость: с тревогой можно работать. Психологические методы, в первую очередь когнитивно-поведенческая терапия, дают хорошие результаты. Работа направлена на то, чтобы научиться замечать тревожные мысли, проверять их на реалистичность и постепенно расширять зону комфорта.</p>
-
-      <p>Если тревога мешает вам жить — это достаточная причина обратиться за помощью. Ждать "настоящего кризиса" не нужно.</p>
-    `,
-  },
-}
 
 interface PageProps {
   params: Promise<{ slug: string }>
@@ -46,47 +26,67 @@ interface PageProps {
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params
-  const post = POSTS[slug]
+  const content = getContent()
+  const post = getBlogPostBySlug(slug, content)
 
   if (!post) {
     return { title: 'Статья не найдена' }
   }
 
   return generatePageMetadata({
-    title: post.title,
-    description: post.excerpt,
+    title: getBlogPostMetadataTitle(post, content),
+    description: getBlogPostMetadataDescription(post, content),
     path: `/blog/${slug}`,
+    image: resolveBlogImageUrl(post.coverImage, content),
+    openGraphType: 'article',
+    publishedTime: post.publishedAt,
+    modifiedTime: post.updatedAt || post.publishedAt,
+    keywords: [post.category, ...post.tags].filter(Boolean),
   })
 }
 
 export default async function BlogPostPage({ params }: PageProps) {
   const { slug } = await params
-  const post = POSTS[slug]
+  const content = getContent()
+  const post = getBlogPostBySlug(slug, content)
 
   if (!post) {
     notFound()
   }
 
-  const content = getContent()
+  const allPosts = getPublishedBlogPosts(content)
+  const relatedPosts = getRelatedBlogPosts(post, allPosts)
+  const relatedServices = getRelatedServiceLinks(post, content)
+  const relatedPages = getRelatedPageLinks(post, content)
+  const primaryCta = getPrimaryBlogCta(post, content)
   const authorName = content.specialist.name || content.specialist.shortName || 'Психолог'
   const authorTitle = content.specialist.title || 'Психолог-консультант'
   const authorExperience = content.specialist.experience
-  const publisherName = content.seo.siteName || authorName
+  const authorCity = content.location.city
+  const siteUrl = content.seo.siteUrl || 'http://localhost:3000'
+  const articleUrl = `${siteUrl}/blog/${post.slug}`
+  const articleImage = resolveBlogImageUrl(post.coverImage, content)
 
-  // Schema.org для статьи (SEO)
   const articleSchema = {
     '@context': 'https://schema.org',
-    '@type': 'Article',
+    '@type': 'BlogPosting',
     headline: post.title,
-    description: post.excerpt,
-    datePublished: post.date,
+    description: getBlogPostMetadataDescription(post, content),
+    datePublished: post.publishedAt,
+    dateModified: post.updatedAt || post.publishedAt,
+    articleSection: post.category,
+    keywords: post.tags.join(', '),
+    mainEntityOfPage: articleUrl,
+    image: articleImage,
     author: {
       '@type': 'Person',
       name: authorName,
+      jobTitle: authorTitle,
     },
     publisher: {
       '@type': 'Organization',
-      name: publisherName,
+      name: content.seo.siteName || authorName,
+      url: siteUrl,
     },
   }
 
@@ -98,13 +98,11 @@ export default async function BlogPostPage({ params }: PageProps) {
       />
 
       <article>
-        {/* HERO */}
-        <header className="bg-[var(--color-cream-100)] relative overflow-hidden py-16 md:py-24 px-4">
-          {/* Decorative Elements */}
-          <div className="absolute top-0 right-0 w-[500px] h-[500px] rounded-full opacity-[0.04] bg-[var(--color-sage-500)] blur-[120px] pointer-events-none" aria-hidden="true" />
-          <div className="absolute bottom-0 left-0 w-[400px] h-[400px] rounded-full opacity-[0.03] bg-[var(--color-accent)] blur-[100px] pointer-events-none" aria-hidden="true" />
+        <header className="relative overflow-hidden bg-[var(--color-cream-100)] px-4 py-16 md:py-24">
+          <div className="pointer-events-none absolute right-0 top-0 h-[500px] w-[500px] rounded-full bg-[var(--color-sage-500)] opacity-[0.05] blur-[120px]" aria-hidden="true" />
+          <div className="pointer-events-none absolute bottom-0 left-0 h-[400px] w-[400px] rounded-full bg-[var(--color-accent)] opacity-[0.04] blur-[100px]" aria-hidden="true" />
 
-          <div className="max-w-3xl mx-auto relative z-10">
+          <div className="relative z-10 mx-auto max-w-6xl">
             <Breadcrumbs
               items={[
                 { label: 'Главная', href: '/' },
@@ -113,73 +111,211 @@ export default async function BlogPostPage({ params }: PageProps) {
               ]}
               className="mb-8"
             />
-            
-            <div className="space-y-6">
-              {/* Category Badge */}
-              <div className="inline-flex items-center gap-2.5 bg-white bg-opacity-50 backdrop-blur-md text-[var(--color-sage-700)] px-5 py-3 rounded-full text-sm font-medium border border-[var(--color-sage-200)] border-opacity-50 shadow-sm">
-                <span className="w-2 h-2 bg-[var(--color-sage-500)] rounded-full" />
-                <span>{post.category}</span>
+
+            <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_280px] lg:items-end">
+              <div className="max-w-4xl space-y-6">
+                <div className="flex flex-wrap items-center gap-3 text-sm text-[var(--color-stone-500)]">
+                  {post.category ? <span className="badge badge-sage">{post.category}</span> : null}
+                  <span>{formatBlogDate(post.publishedAt || post.updatedAt)}</span>
+                  <span>•</span>
+                  <span>{getBlogReadTime(post)} чтения</span>
+                  {post.updatedAt && post.updatedAt !== post.publishedAt ? (
+                    <>
+                      <span>•</span>
+                      <span>Обновлено {formatBlogDate(post.updatedAt)}</span>
+                    </>
+                  ) : null}
+                </div>
+
+                <h1 className="font-serif text-4xl leading-[1.06] tracking-tight text-[var(--color-stone-800)] md:text-6xl">
+                  {post.title}
+                </h1>
+
+                <p className="max-w-3xl text-lg font-light leading-relaxed text-[var(--color-stone-500)] md:text-xl">
+                  {post.excerpt}
+                </p>
               </div>
 
-              {/* Heading */}
-              <h1 className="font-serif text-4xl md:text-5xl lg:text-6xl text-[var(--color-stone-800)] leading-[1.1] tracking-tight">
-                {post.title}
-              </h1>
-
-              {/* Meta Information */}
-              <div className="flex flex-wrap items-center gap-4 text-sm text-[var(--color-stone-500)]">
-                <span className="font-medium">{post.date}</span>
-                <span className="text-[var(--color-stone-300)]">·</span>
-                <span>{post.readTime} чтения</span>
-                <span className="text-[var(--color-stone-300)]">·</span>
-                <span>{authorName}</span>
-              </div>
+              <aside className="rounded-[32px] border border-[var(--color-stone-200)] bg-white/90 p-6 shadow-[var(--shadow-card)] backdrop-blur-sm">
+                <div className="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--color-sage-600)]">
+                  Полезный переход
+                </div>
+                <div className="mt-4 space-y-4">
+                  <div className="font-serif text-2xl text-[var(--color-stone-800)]">
+                    {primaryCta.title}
+                  </div>
+                  <p className="text-sm leading-7 text-[var(--color-stone-500)]">
+                    {primaryCta.description}
+                  </p>
+                  <Link href={primaryCta.href} className="btn-primary w-full">
+                    {primaryCta.label}
+                  </Link>
+                </div>
+              </aside>
             </div>
           </div>
         </header>
 
-        {/* КОНТЕНТ */}
-        <section className="py-16 px-4 bg-white">
-          <div className="max-w-3xl mx-auto">
-            <div
-              className="prose-content text-[var(--color-stone-600)] leading-relaxed space-y-6 text-base [&_h2]:font-serif [&_h2]:text-3xl [&_h2]:text-[var(--color-stone-800)] [&_h2]:mt-10 [&_h2]:mb-4 [&_p]:leading-[1.8]"
-              dangerouslySetInnerHTML={{ __html: post.content }}
-            />
+        {post.coverImage ? (
+          <section className="bg-white px-4 pt-10">
+            <div className="mx-auto max-w-6xl overflow-hidden rounded-[32px] border border-[var(--color-stone-200)] bg-[var(--color-stone-100)] shadow-[var(--shadow-soft)]">
+              <img
+                src={post.coverImage}
+                alt={post.coverAlt || post.title}
+                className="max-h-[560px] w-full object-cover"
+              />
+            </div>
+          </section>
+        ) : null}
 
-            {/* Подпись автора */}
-            <div className="mt-16 pt-8 border-t border-[var(--color-stone-200)] flex items-center gap-4">
-              <div className="w-14 h-14 rounded-full bg-[var(--color-cream-200)] flex items-center justify-center flex-shrink-0">
-                <svg className="w-7 h-7 text-[var(--color-stone-400)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                </svg>
+        <section className="bg-white px-4 py-16">
+          <div className="mx-auto grid max-w-6xl gap-10 lg:grid-cols-[minmax(0,1fr)_320px]">
+            <div className="min-w-0">
+              <BlogBlocks blocks={post.content} />
+
+              <div className="mt-10 rounded-[32px] border border-[var(--color-sage-200)] bg-[var(--color-sage-100)] p-6 md:p-8">
+                <div className="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--color-sage-700)]">
+                  Следующий шаг
+                </div>
+                <h2 className="mt-4 font-serif text-3xl text-[var(--color-stone-800)]">
+                  {primaryCta.title}
+                </h2>
+                <p className="mt-3 max-w-2xl text-[var(--color-stone-600)]">
+                  {primaryCta.description}
+                </p>
+                <div className="mt-6 flex flex-col gap-3 sm:flex-row">
+                  <Link href={primaryCta.href} className="btn-primary">
+                    {primaryCta.label}
+                  </Link>
+                  <Link href="/services" className="btn-secondary">
+                    Посмотреть направления помощи
+                  </Link>
+                </div>
               </div>
-              <div>
-                <div className="font-semibold text-[var(--color-stone-800)]">{authorName}</div>
-                <div className="text-sm text-[var(--color-stone-400)]">
-                  {authorTitle}
-                  {authorExperience ? ` · ${authorExperience}` : ''}
+
+              <div className="mt-12 rounded-[32px] border border-[var(--color-stone-200)] bg-[var(--color-cream-100)] p-6 md:p-8">
+                <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+                  <div className="space-y-2">
+                    <div className="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--color-sage-600)]">
+                      Автор статьи
+                    </div>
+                    <div className="font-serif text-3xl text-[var(--color-stone-800)]">
+                      {authorName}
+                    </div>
+                    <p className="text-[var(--color-stone-600)]">
+                      {authorTitle}
+                      {authorExperience ? ` • опыт ${authorExperience}` : ''}
+                      {authorCity ? ` • ${authorCity}` : ''}
+                    </p>
+                  </div>
+                  <div className="flex flex-col gap-3 sm:flex-row">
+                    <Link href="/about" className="btn-secondary">
+                      Узнать о специалисте
+                    </Link>
+                    <Link href="/contact" className="btn-primary">
+                      Записаться
+                    </Link>
+                  </div>
                 </div>
               </div>
             </div>
+
+            <aside className="space-y-6 lg:sticky lg:top-28 lg:self-start">
+              {relatedServices.length > 0 ? (
+                <div className="rounded-[28px] border border-[var(--color-stone-200)] bg-[var(--color-cream-100)] p-6">
+                  <h2 className="font-serif text-2xl text-[var(--color-stone-800)]">
+                    С чем это можно обсудить
+                  </h2>
+                  <div className="mt-4 space-y-3">
+                    {relatedServices.map((service) => (
+                      <Link
+                        key={service.id}
+                        href={service.href}
+                        className="block rounded-2xl border border-[var(--color-stone-200)] bg-white p-4 transition-colors hover:border-[var(--color-sage-300)]"
+                      >
+                        <div className="font-medium text-[var(--color-stone-800)]">{service.title}</div>
+                        <div className="mt-1 text-sm leading-6 text-[var(--color-stone-500)]">
+                          {service.description}
+                        </div>
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+              ) : null}
+
+              {relatedPages.length > 0 ? (
+                <div className="rounded-[28px] border border-[var(--color-stone-200)] bg-white p-6 shadow-[var(--shadow-soft)]">
+                  <h2 className="font-serif text-2xl text-[var(--color-stone-800)]">
+                    Вас может заинтересовать
+                  </h2>
+                  <div className="mt-4 space-y-3">
+                    {relatedPages.map((page) => (
+                      <Link
+                        key={page.key}
+                        href={page.href}
+                        className="block rounded-2xl bg-[var(--color-stone-100)] p-4 transition-colors hover:bg-[var(--color-stone-200)]"
+                      >
+                        <div className="font-medium text-[var(--color-stone-800)]">{page.title}</div>
+                        <div className="mt-1 text-sm leading-6 text-[var(--color-stone-500)]">
+                          {page.description}
+                        </div>
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+              ) : null}
+
+              <div className="rounded-[28px] border border-[var(--color-stone-200)] bg-[var(--color-stone-800)] p-6 text-white">
+                <div className="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--color-sage-200)]">
+                  Быстрый CTA
+                </div>
+                <h2 className="mt-4 font-serif text-3xl text-white">
+                  Обсудить ваш запрос лично
+                </h2>
+                <p className="mt-3 text-sm leading-7 text-[var(--color-stone-300)]">
+                  Если хотите перейти от чтения к живому разговору, можно выбрать удобный способ связи прямо сейчас.
+                </p>
+                <div className="mt-6 space-y-3">
+                  <Link href="/contact" className="btn-primary w-full !bg-white !text-[var(--color-sage-800)]">
+                    Записаться на консультацию
+                  </Link>
+                  <Link href="/pricing" className="btn-secondary w-full !border-white/30 !text-white hover:!bg-white/10">
+                    Посмотреть стоимость
+                  </Link>
+                </div>
+              </div>
+            </aside>
           </div>
         </section>
+
+        {relatedPosts.length > 0 ? (
+          <section className="bg-[var(--color-cream-100)] px-4 py-16">
+            <div className="mx-auto max-w-6xl">
+              <div className="mb-8 max-w-2xl">
+                <div className="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--color-sage-600)]">
+                  Читайте также
+                </div>
+                <h2 className="mt-4 font-serif text-4xl text-[var(--color-stone-800)]">
+                  Похожие статьи по теме
+                </h2>
+                <p className="mt-3 text-[var(--color-stone-500)]">
+                  Эти материалы помогут посмотреть на тему шире и перейти к следующему полезному шагу.
+                </p>
+              </div>
+              <div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
+                {relatedPosts.map((relatedPost) => (
+                  <BlogCard key={relatedPost.id} post={relatedPost} />
+                ))}
+              </div>
+            </div>
+          </section>
+        ) : null}
       </article>
 
-      {/* CTA */}
       <CTASection
-        title="Статья оказалась близкой?"
-        subtitle="Если хотите разобраться с этим глубже — я здесь."
+        title="Чтение помогло лучше понять себя?"
+        subtitle="На консультации можно перейти от общей информации к вашей личной ситуации и выбрать понятный путь дальше."
       />
-
-      {/* Назад к блогу */}
-      <section className="py-12 px-4 bg-white text-center">
-        <Link
-          href="/blog"
-          className="text-[var(--color-sage-600)] hover:text-[var(--color-sage-800)] font-medium text-sm underline underline-offset-4 transition-colors"
-        >
-          ← Все статьи
-        </Link>
-      </section>
     </>
   )
 }

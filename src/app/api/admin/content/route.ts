@@ -2,15 +2,46 @@ export const runtime = 'nodejs'
 
 import { revalidatePath } from 'next/cache'
 import { NextRequest, NextResponse } from 'next/server'
+import { normalizeBlogSection } from '@/lib/blog-schema'
+import { getPublishedBlogPosts } from '@/lib/blog'
 import { getContent, saveContent, type SiteContent } from '@/lib/content'
 import { isAuthenticatedFromRequest } from '@/lib/auth'
 import { createRequestId, getRequestMeta, logError, logInfo, logWarn, summarizePayload } from '@/lib/logger'
+
+function prepareBlogSection(current: SiteContent['blog'], next: unknown) {
+  const normalizedCurrent = normalizeBlogSection(current)
+  const normalizedNext = normalizeBlogSection(next)
+  const currentById = new Map(normalizedCurrent.posts.map((post) => [post.id, post]))
+  const now = new Date().toISOString()
+
+  return {
+    ...normalizedNext,
+    posts: normalizedNext.posts.map((post) => {
+      const previous = currentById.get(post.id)
+
+      return {
+        ...post,
+        tags: [...new Set(post.tags)],
+        serviceIds: [...new Set(post.serviceIds)],
+        relatedPageKeys: [...new Set(post.relatedPageKeys)],
+        relatedPostIds: [...new Set(post.relatedPostIds)].filter(
+          (relatedId) => relatedId !== post.id
+        ),
+        publishedAt:
+          post.status === 'published'
+            ? post.publishedAt || previous?.publishedAt || now
+            : post.publishedAt || previous?.publishedAt,
+        updatedAt: now,
+      }
+    }),
+  }
+}
 
 function unauthorized() {
   return NextResponse.json({ error: 'Необходима авторизация' }, { status: 401 })
 }
 
-function revalidatePublicContent() {
+function revalidatePublicContent(content: SiteContent) {
   const paths = [
     '/',
     '/about',
@@ -30,6 +61,10 @@ function revalidatePublicContent() {
 
   for (const path of paths) {
     revalidatePath(path)
+  }
+
+  for (const post of getPublishedBlogPosts(content)) {
+    revalidatePath(`/blog/${post.slug}`)
   }
 }
 
@@ -99,9 +134,11 @@ export async function PATCH(request: NextRequest) {
     }
 
     const current = getContent()
-    const updated = { ...current, [section]: data } as SiteContent
+    const preparedData =
+      section === 'blog' ? prepareBlogSection(current.blog, data) : data
+    const updated = { ...current, [section]: preparedData } as SiteContent
     saveContent(updated)
-    revalidatePublicContent()
+    revalidatePublicContent(updated)
     logInfo('admin.content.patch.success', {
       requestId,
       ...requestMeta,

@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { getContent } from '@/lib/content'
 
 interface BreadcrumbItem {
   label: string
@@ -11,6 +12,14 @@ interface BreadcrumbsProps {
 }
 
 export function Breadcrumbs({ items, className = '' }: BreadcrumbsProps) {
+  let siteUrl = 'http://localhost:3000'
+
+  try {
+    siteUrl = getContent().seo.siteUrl || siteUrl
+  } catch {
+    siteUrl = 'http://localhost:3000'
+  }
+
   // Schema.org разметка для хлебных крошек (SEO)
   const schemaData = {
     '@context': 'https://schema.org',
@@ -19,7 +28,7 @@ export function Breadcrumbs({ items, className = '' }: BreadcrumbsProps) {
       '@type': 'ListItem',
       position: index + 1,
       name: item.label,
-      item: item.href ? `https://anna-sokolova.ru${item.href}` : undefined,
+      item: item.href ? `${siteUrl}${item.href}` : undefined,
     })),
   }
 

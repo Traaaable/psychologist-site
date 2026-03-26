@@ -101,6 +101,30 @@ export function Input({ label, hint, ...props }: InputProps) {
   )
 }
 
+interface SelectProps extends React.SelectHTMLAttributes<HTMLSelectElement> {
+  label: string
+  hint?: string
+  options: Array<{ value: string; label: string }>
+}
+
+export function Select({ label, hint, options, children, ...props }: SelectProps) {
+  return (
+    <Field label={label} hint={hint} required={props.required}>
+      <select
+        {...props}
+        className="w-full px-4 py-3 text-base border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#517a63]/40 focus:border-[#517a63] transition bg-white disabled:bg-gray-50 disabled:text-gray-400"
+      >
+        {options.map((option) => (
+          <option key={option.value} value={option.value}>
+            {option.label}
+          </option>
+        ))}
+        {children}
+      </select>
+    </Field>
+  )
+}
+
 // ============================
 // БОЛЬШОЕ ТЕКСТОВОЕ ПОЛЕ
 // ============================
@@ -296,6 +320,32 @@ export function ListCard({
         </div>
 
         <div className="flex items-center gap-1 flex-shrink-0">
+          {(onMoveUp || onMoveDown) && (
+            <>
+              {onMoveUp && (
+                <button
+                  onClick={onMoveUp}
+                  className="p-2 rounded-lg text-gray-300 hover:text-gray-700 hover:bg-gray-100 transition-colors"
+                  title="Поднять выше"
+                >
+                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 15.75l7.5-7.5 7.5 7.5" />
+                  </svg>
+                </button>
+              )}
+              {onMoveDown && (
+                <button
+                  onClick={onMoveDown}
+                  className="p-2 rounded-lg text-gray-300 hover:text-gray-700 hover:bg-gray-100 transition-colors"
+                  title="Опустить ниже"
+                >
+                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 8.25L12 15.75 4.5 8.25" />
+                  </svg>
+                </button>
+              )}
+            </>
+          )}
           {onToggleVisible && (
             <button
               onClick={onToggleVisible}
