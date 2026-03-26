@@ -1,14 +1,50 @@
 export const runtime = 'nodejs'
 
-import { NextRequest, NextResponse } from 'next/server'
-import { writeFile, mkdir } from 'fs/promises'
+import { mkdir, writeFile } from 'fs/promises'
 import path from 'path'
+import { NextRequest, NextResponse } from 'next/server'
 import { isAuthenticatedFromRequest } from '@/lib/auth'
 import { createRequestId, getRequestMeta, logError, logInfo, logWarn } from '@/lib/logger'
 
 const UPLOAD_DIR = path.join(process.cwd(), 'public', 'uploads')
-const MAX_SIZE = 5 * 1024 * 1024
-const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp']
+const MAX_SIZE = 15 * 1024 * 1024
+
+const MIME_EXTENSION_MAP: Record<string, string> = {
+  'image/jpeg': '.jpg',
+  'image/png': '.png',
+  'image/webp': '.webp',
+  'image/gif': '.gif',
+  'image/svg+xml': '.svg',
+  'image/avif': '.avif',
+  'image/heic': '.heic',
+  'image/heif': '.heif',
+  'image/bmp': '.bmp',
+  'image/tiff': '.tif',
+  'image/x-icon': '.ico',
+}
+
+function isImageType(fileType: string) {
+  return fileType.startsWith('image/')
+}
+
+function getSafeExtension(file: File) {
+  const mimeExtension = MIME_EXTENSION_MAP[file.type]
+  if (mimeExtension) {
+    return mimeExtension
+  }
+
+  const rawExtension = path.extname(file.name).toLowerCase()
+  if (rawExtension && /^\.[a-z0-9]+$/i.test(rawExtension)) {
+    return rawExtension
+  }
+
+  const subtype = file.type
+    .split('/')[1]
+    ?.toLowerCase()
+    .replace(/[^a-z0-9]+/g, '')
+
+  return subtype ? `.${subtype}` : '.img'
+}
 
 export async function POST(request: NextRequest) {
   const requestId = createRequestId()
@@ -21,6 +57,7 @@ export async function POST(request: NextRequest) {
     logWarn('admin.upload.unauthorized', { requestId, ...requestMeta })
     return NextResponse.json({ error: 'Необходима авторизация' }, { status: 401 })
   }
+
   try {
     const formData = await request.formData()
     const file = formData.get('file') as File | null
@@ -34,7 +71,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Файл не выбран' }, { status: 400 })
     }
 
-    if (!ALLOWED_TYPES.includes(file.type)) {
+    if (!isImageType(file.type)) {
       logWarn('admin.upload.validation_failed', {
         requestId,
         ...requestMeta,
@@ -43,10 +80,7 @@ export async function POST(request: NextRequest) {
         fileType: file.type,
         fileSize: file.size,
       })
-      return NextResponse.json(
-        { error: 'Разрешены только изображения: JPEG, PNG, WebP' },
-        { status: 400 }
-      )
+      return NextResponse.json({ error: 'Можно загружать только изображения' }, { status: 400 })
     }
 
     if (file.size > MAX_SIZE) {
@@ -60,18 +94,18 @@ export async function POST(request: NextRequest) {
         maxSize: MAX_SIZE,
       })
       return NextResponse.json(
-        { error: 'Файл слишком большой. Максимальный размер — 5 МБ' },
+        { error: 'Файл слишком большой. Максимальный размер — 15 МБ' },
         { status: 400 }
       )
     }
 
     await mkdir(UPLOAD_DIR, { recursive: true })
 
-    const ext = path.extname(file.name).toLowerCase() || '.jpg'
+    const ext = getSafeExtension(file)
     const safeName = `photo-${Date.now()}${ext}`
     const filePath = path.join(UPLOAD_DIR, safeName)
-
     const buffer = Buffer.from(await file.arrayBuffer())
+
     await writeFile(filePath, buffer)
 
     const publicUrl = `/uploads/${safeName}`
@@ -85,6 +119,7 @@ export async function POST(request: NextRequest) {
       savedAs: safeName,
       publicUrl,
     })
+
     return NextResponse.json({ success: true, url: publicUrl })
   } catch (err) {
     logError('admin.upload.error', {

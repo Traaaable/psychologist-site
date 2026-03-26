@@ -101,7 +101,7 @@ export default function AdminGeneralPage() {
                 <input
                   ref={fileInputRef}
                   type="file"
-                  accept="image/jpeg,image/png,image/webp"
+                  accept="image/*"
                   className="hidden"
                   onChange={handlePhotoUpload}
                 />
@@ -114,7 +114,7 @@ export default function AdminGeneralPage() {
                   {uploading ? 'Загружаем...' : form.photo ? 'Заменить фото' : 'Загрузить фото'}
                 </button>
                 <p className="text-xs text-gray-400 mt-1.5">
-                  JPEG, PNG или WebP, не более 5 МБ
+                  Любой формат изображения, не более 15 МБ
                 </p>
                 {form.photo && (
                   <button

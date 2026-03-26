@@ -94,7 +94,7 @@ export function ImageUploadField({
           <input
             ref={inputRef}
             type="file"
-            accept="image/png,image/jpeg,image/webp"
+            accept="image/*"
             onChange={handleFileChange}
             className="hidden"
           />
