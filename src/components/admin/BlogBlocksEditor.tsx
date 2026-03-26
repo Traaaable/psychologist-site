@@ -12,7 +12,9 @@ import { ImageUploadField } from '@/components/admin/ImageUploadField'
 import {
   createBlockId,
   type BlogContentBlock,
+  type BlogDividerBlock,
   type BlogHeadingBlock,
+  type BlogHtmlBlock,
   type BlogImageBlock,
   type BlogListBlock,
   type BlogParagraphBlock,
@@ -45,6 +47,10 @@ function getBlockTitle(block: BlogContentBlock) {
       return 'Цитата'
     case 'image':
       return 'Изображение'
+    case 'divider':
+      return 'Разделитель'
+    case 'html':
+      return 'HTML fallback'
     default:
       return 'Абзац'
   }
@@ -61,6 +67,14 @@ function getBlockSubtitle(block: BlogContentBlock) {
 
   if (block.type === 'quote') {
     return block.text || 'Выделенная мысль или цитата'
+  }
+
+  if (block.type === 'divider') {
+    return 'Тонкая линия между смысловыми частями статьи'
+  }
+
+  if (block.type === 'html') {
+    return block.html || 'Резервный блок для сложной разметки'
   }
 
   return block.text || 'Введите текст блока'
@@ -136,21 +150,21 @@ function RichTextarea({
           <button
             type="button"
             onClick={() => wrapSelection('**', '**')}
-            className="px-3 py-1.5 rounded-lg border border-gray-200 text-xs font-medium text-gray-600 hover:bg-gray-50 transition-colors"
+            className="rounded-lg border border-gray-200 px-3 py-1.5 text-xs font-medium text-gray-600 transition-colors hover:bg-gray-50"
           >
             Жирный
           </button>
           <button
             type="button"
             onClick={() => wrapSelection('*', '*')}
-            className="px-3 py-1.5 rounded-lg border border-gray-200 text-xs font-medium text-gray-600 hover:bg-gray-50 transition-colors"
+            className="rounded-lg border border-gray-200 px-3 py-1.5 text-xs font-medium text-gray-600 transition-colors hover:bg-gray-50"
           >
             Курсив
           </button>
           <button
             type="button"
             onClick={insertLink}
-            className="px-3 py-1.5 rounded-lg border border-gray-200 text-xs font-medium text-gray-600 hover:bg-gray-50 transition-colors"
+            className="rounded-lg border border-gray-200 px-3 py-1.5 text-xs font-medium text-gray-600 transition-colors hover:bg-gray-50"
           >
             Ссылка
           </button>
@@ -161,7 +175,7 @@ function RichTextarea({
           onChange={(event) => onChange(event.target.value)}
           rows={rows}
           placeholder={placeholder}
-          className="w-full px-4 py-3 text-base border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#517a63]/40 focus:border-[#517a63] transition bg-white resize-none"
+          className="w-full resize-none rounded-xl border border-gray-200 bg-white px-4 py-3 text-base transition focus:border-[#517a63] focus:outline-none focus:ring-2 focus:ring-[#517a63]/40"
         />
       </div>
     </Field>
@@ -216,11 +230,22 @@ export function BlogBlocksEditor({ blocks, onChange }: BlogBlocksEditorProps) {
                   alt: '',
                   caption: '',
                 } satisfies BlogImageBlock)
-              : ({
-                  id: createBlockId('paragraph'),
-                  type: 'paragraph',
-                  text: '',
-                } satisfies BlogParagraphBlock)
+              : type === 'divider'
+                ? ({
+                    id: createBlockId('divider'),
+                    type: 'divider',
+                  } satisfies BlogDividerBlock)
+                : type === 'html'
+                  ? ({
+                      id: createBlockId('html'),
+                      type: 'html',
+                      html: '',
+                    } satisfies BlogHtmlBlock)
+                  : ({
+                      id: createBlockId('paragraph'),
+                      type: 'paragraph',
+                      text: '',
+                    } satisfies BlogParagraphBlock)
 
     onChange([...blocks, baseBlock])
   }
@@ -380,6 +405,28 @@ export function BlogBlocksEditor({ blocks, onChange }: BlogBlocksEditorProps) {
                 />
               </>
             ) : null}
+
+            {block.type === 'divider' ? (
+              <div className="rounded-2xl border border-dashed border-gray-200 bg-gray-50 px-4 py-4 text-sm text-gray-500">
+                Разделитель помогает аккуратно отделить одну смысловую часть статьи от другой.
+              </div>
+            ) : null}
+
+            {block.type === 'html' ? (
+              <Textarea
+                label="HTML fallback"
+                value={block.html}
+                onChange={(event) =>
+                  updateBlock<BlogHtmlBlock>(block.id, (currentBlock) => ({
+                    ...currentBlock,
+                    html: event.target.value,
+                  }))
+                }
+                rows={8}
+                placeholder="<div>Сложный фрагмент, который пока нельзя выразить обычными блоками</div>"
+                hint="Используйте только для редких сложных случаев. Основной контент лучше хранить обычными блоками."
+              />
+            ) : null}
           </div>
         </ListCard>
       ))}
@@ -390,37 +437,51 @@ export function BlogBlocksEditor({ blocks, onChange }: BlogBlocksEditorProps) {
           <button
             type="button"
             onClick={() => addBlock('paragraph')}
-            className="px-4 py-2 rounded-xl border border-gray-200 bg-white text-sm text-gray-600 hover:border-[#517a63] hover:text-[#517a63] transition-colors"
+            className="rounded-xl border border-gray-200 bg-white px-4 py-2 text-sm text-gray-600 transition-colors hover:border-[#517a63] hover:text-[#517a63]"
           >
             Абзац
           </button>
           <button
             type="button"
             onClick={() => addBlock('heading')}
-            className="px-4 py-2 rounded-xl border border-gray-200 bg-white text-sm text-gray-600 hover:border-[#517a63] hover:text-[#517a63] transition-colors"
+            className="rounded-xl border border-gray-200 bg-white px-4 py-2 text-sm text-gray-600 transition-colors hover:border-[#517a63] hover:text-[#517a63]"
           >
             Подзаголовок
           </button>
           <button
             type="button"
             onClick={() => addBlock('list')}
-            className="px-4 py-2 rounded-xl border border-gray-200 bg-white text-sm text-gray-600 hover:border-[#517a63] hover:text-[#517a63] transition-colors"
+            className="rounded-xl border border-gray-200 bg-white px-4 py-2 text-sm text-gray-600 transition-colors hover:border-[#517a63] hover:text-[#517a63]"
           >
             Список
           </button>
           <button
             type="button"
             onClick={() => addBlock('quote')}
-            className="px-4 py-2 rounded-xl border border-gray-200 bg-white text-sm text-gray-600 hover:border-[#517a63] hover:text-[#517a63] transition-colors"
+            className="rounded-xl border border-gray-200 bg-white px-4 py-2 text-sm text-gray-600 transition-colors hover:border-[#517a63] hover:text-[#517a63]"
           >
             Цитата
           </button>
           <button
             type="button"
             onClick={() => addBlock('image')}
-            className="px-4 py-2 rounded-xl border border-gray-200 bg-white text-sm text-gray-600 hover:border-[#517a63] hover:text-[#517a63] transition-colors"
+            className="rounded-xl border border-gray-200 bg-white px-4 py-2 text-sm text-gray-600 transition-colors hover:border-[#517a63] hover:text-[#517a63]"
           >
             Изображение
+          </button>
+          <button
+            type="button"
+            onClick={() => addBlock('divider')}
+            className="rounded-xl border border-gray-200 bg-white px-4 py-2 text-sm text-gray-600 transition-colors hover:border-[#517a63] hover:text-[#517a63]"
+          >
+            Разделитель
+          </button>
+          <button
+            type="button"
+            onClick={() => addBlock('html')}
+            className="rounded-xl border border-gray-200 bg-white px-4 py-2 text-sm text-gray-600 transition-colors hover:border-[#517a63] hover:text-[#517a63]"
+          >
+            HTML fallback
           </button>
         </div>
       </div>

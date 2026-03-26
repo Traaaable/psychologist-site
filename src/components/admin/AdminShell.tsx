@@ -76,6 +76,16 @@ const NAV_ITEMS = [
     ),
   },
   {
+    href: '/admin/blog/import',
+    label: 'Импорт из B17',
+    hint: 'Поиск новых статей, импорт и переимпорт',
+    icon: (
+      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M12 3v12m0 0l-3.75-3.75M12 15l3.75-3.75M4.5 16.5v.75A2.25 2.25 0 006.75 19.5h10.5a2.25 2.25 0 002.25-2.25v-.75" />
+      </svg>
+    ),
+  },
+  {
     href: '/admin/contacts',
     label: 'Контакты и место приёма',
     hint: 'Телефон, адрес, формат работы',

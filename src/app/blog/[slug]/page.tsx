@@ -38,6 +38,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     description: getBlogPostMetadataDescription(post, content),
     path: `/blog/${slug}`,
     image: resolveBlogImageUrl(post.coverImage, content),
+    canonicalUrl: post.seo.canonicalUrl || undefined,
     openGraphType: 'article',
     publishedTime: post.publishedAt,
     modifiedTime: post.updatedAt || post.publishedAt,
@@ -66,6 +67,7 @@ export default async function BlogPostPage({ params }: PageProps) {
   const siteUrl = content.seo.siteUrl || 'http://localhost:3000'
   const articleUrl = `${siteUrl}/blog/${post.slug}`
   const articleImage = resolveBlogImageUrl(post.coverImage, content)
+  const sourceOriginalUrl = post.sourceMeta?.source === 'b17' ? post.sourceMeta.originalUrl : undefined
 
   const articleSchema = {
     '@context': 'https://schema.org',
@@ -116,6 +118,7 @@ export default async function BlogPostPage({ params }: PageProps) {
               <div className="max-w-4xl space-y-6">
                 <div className="flex flex-wrap items-center gap-3 text-sm text-[var(--color-stone-500)]">
                   {post.category ? <span className="badge badge-sage">{post.category}</span> : null}
+                  {sourceOriginalUrl ? <span className="badge badge-stone">Импорт из B17</span> : null}
                   <span>{formatBlogDate(post.publishedAt || post.updatedAt)}</span>
                   <span>•</span>
                   <span>{getBlogReadTime(post)} чтения</span>
@@ -172,6 +175,26 @@ export default async function BlogPostPage({ params }: PageProps) {
           <div className="mx-auto grid max-w-6xl gap-10 lg:grid-cols-[minmax(0,1fr)_320px]">
             <div className="min-w-0">
               <BlogBlocks blocks={post.content} />
+
+              {sourceOriginalUrl ? (
+                <div className="mt-8 rounded-[28px] border border-[var(--color-stone-200)] bg-[var(--color-stone-100)] p-5 text-sm leading-7 text-[var(--color-stone-600)]">
+                  <div className="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--color-sage-700)]">
+                    Источник материала
+                  </div>
+                  <p className="mt-3">
+                    Статья подготовлена на основе публикации автора на B17 и адаптирована для блога сайта.
+                  </p>
+                  <a
+                    href={sourceOriginalUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="mt-3 inline-flex items-center gap-2 font-medium text-[var(--color-sage-700)] underline underline-offset-4"
+                  >
+                    Открыть оригинал на B17
+                    <span aria-hidden="true">↗</span>
+                  </a>
+                </div>
+              ) : null}
 
               <div className="mt-10 rounded-[32px] border border-[var(--color-sage-200)] bg-[var(--color-sage-100)] p-6 md:p-8">
                 <div className="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--color-sage-700)]">

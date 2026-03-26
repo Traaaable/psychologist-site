@@ -108,13 +108,24 @@ interface SelectProps extends React.SelectHTMLAttributes<HTMLSelectElement> {
 }
 
 export function Select({ label, hint, options, children, ...props }: SelectProps) {
+  const resolvedOptions =
+    options.some((option) => option.value === 'draft') &&
+    options.some((option) => option.value === 'published') &&
+    !options.some((option) => option.value === 'review')
+      ? [
+          ...options.filter((option) => option.value !== 'published'),
+          { value: 'review', label: 'Требует проверки' },
+          ...options.filter((option) => option.value === 'published'),
+        ]
+      : options
+
   return (
     <Field label={label} hint={hint} required={props.required}>
       <select
         {...props}
         className="w-full px-4 py-3 text-base border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#517a63]/40 focus:border-[#517a63] transition bg-white disabled:bg-gray-50 disabled:text-gray-400"
       >
-        {options.map((option) => (
+        {resolvedOptions.map((option) => (
           <option key={option.value} value={option.value}>
             {option.label}
           </option>

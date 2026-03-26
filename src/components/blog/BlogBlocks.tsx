@@ -160,6 +160,24 @@ export function BlogBlocks({ blocks, className = '' }: BlogBlocksProps) {
           )
         }
 
+        if (block.type === 'divider') {
+          return (
+            <div key={block.id || index} className="py-2">
+              <hr className="border-0 border-t border-[var(--color-stone-200)]" />
+            </div>
+          )
+        }
+
+        if (block.type === 'html') {
+          return (
+            <div
+              key={block.id || index}
+              className="overflow-hidden rounded-3xl border border-[var(--color-stone-200)] bg-[var(--color-stone-100)] px-5 py-5 text-[var(--color-stone-600)] shadow-[var(--shadow-soft)] [&_a]:text-[var(--color-sage-700)] [&_a]:underline [&_a]:underline-offset-4 [&_blockquote]:border-l-4 [&_blockquote]:border-[var(--color-sage-300)] [&_blockquote]:pl-4 [&_img]:rounded-2xl [&_img]:border [&_img]:border-[var(--color-stone-200)] [&_img]:shadow-[var(--shadow-soft)] [&_li]:leading-8 [&_ol]:list-decimal [&_ol]:space-y-2 [&_ol]:pl-6 [&_p]:leading-8 [&_p:not(:first-child)]:mt-4 [&_ul]:list-disc [&_ul]:space-y-2 [&_ul]:pl-6"
+              dangerouslySetInnerHTML={{ __html: block.html }}
+            />
+          )
+        }
+
         return (
           <p
             key={block.id || index}

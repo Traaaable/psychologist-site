@@ -1,10 +1,9 @@
 export const runtime = 'nodejs'
 
-import { revalidatePath } from 'next/cache'
 import { NextRequest, NextResponse } from 'next/server'
 import { normalizeBlogSection } from '@/lib/blog-schema'
-import { getPublishedBlogPosts } from '@/lib/blog'
 import { getContent, saveContent, type SiteContent } from '@/lib/content'
+import { revalidatePublicContent } from '@/lib/content-revalidation'
 import { isAuthenticatedFromRequest } from '@/lib/auth'
 import { createRequestId, getRequestMeta, logError, logInfo, logWarn, summarizePayload } from '@/lib/logger'
 
@@ -39,33 +38,6 @@ function prepareBlogSection(current: SiteContent['blog'], next: unknown) {
 
 function unauthorized() {
   return NextResponse.json({ error: 'Необходима авторизация' }, { status: 401 })
-}
-
-function revalidatePublicContent(content: SiteContent) {
-  const paths = [
-    '/',
-    '/about',
-    '/services',
-    '/how-it-works',
-    '/pricing',
-    '/faq',
-    '/contact',
-    '/blog',
-    '/privacy',
-    '/robots.txt',
-    '/sitemap.xml',
-    '/manifest.webmanifest',
-  ]
-
-  revalidatePath('/', 'layout')
-
-  for (const path of paths) {
-    revalidatePath(path)
-  }
-
-  for (const post of getPublishedBlogPosts(content)) {
-    revalidatePath(`/blog/${post.slug}`)
-  }
 }
 
 export async function GET(request: NextRequest) {

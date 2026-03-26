@@ -35,6 +35,7 @@ export function generatePageMetadata({
   path,
   pageKey,
   image,
+  canonicalUrl,
   openGraphType = 'website',
   publishedTime,
   modifiedTime,
@@ -46,6 +47,7 @@ export function generatePageMetadata({
   path: string
   pageKey?: string
   image?: string
+  canonicalUrl?: string
   openGraphType?: 'website' | 'article'
   publishedTime?: string
   modifiedTime?: string
@@ -59,18 +61,19 @@ export function generatePageMetadata({
   const resolvedDescription =
     seoPage?.description || description || content?.seo.defaultDescription || ''
   const url = getAbsoluteUrl(path)
+  const canonical = canonicalUrl || url
 
   return {
     title: resolvedTitle,
     description: resolvedDescription,
     keywords,
     robots,
-    alternates: { canonical: url },
+    alternates: { canonical },
     openGraph: {
       type: openGraphType,
       title: `${resolvedTitle} | ${brandName}`,
       description: resolvedDescription,
-      url,
+      url: canonical,
       ...(publishedTime ? { publishedTime } : {}),
       ...(modifiedTime ? { modifiedTime } : {}),
       ...(image ? { images: [{ url: image, width: 1200, height: 630 }] } : {}),

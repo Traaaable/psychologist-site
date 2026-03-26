@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from 'react'
 import Link from 'next/link'
+import { useSearchParams } from 'next/navigation'
 import { AdminShell } from '@/components/admin/AdminShell'
 import { BlogBlocksEditor } from '@/components/admin/BlogBlocksEditor'
 import { BlogPreview } from '@/components/admin/BlogPreview'
@@ -50,7 +51,19 @@ function parseTags(raw: string) {
     .filter(Boolean)
 }
 
+function getPostStatusLabel(status: BlogPost['status']) {
+  switch (status) {
+    case 'published':
+      return 'Опубликовано'
+    case 'review':
+      return 'Требует проверки'
+    default:
+      return 'Черновик'
+  }
+}
+
 export default function AdminBlogPage() {
+  const searchParams = useSearchParams()
   const { save, changed, setChanged } = useSaveSection('blog')
   const [loading, setLoading] = useState(true)
   const [blog, setBlog] = useState<BlogSection>(createEmptyBlogSection())
@@ -60,6 +73,7 @@ export default function AdminBlogPage() {
   const [specialistName, setSpecialistName] = useState('Психолог')
   const [specialistTitle, setSpecialistTitle] = useState('Психолог-консультант')
   const [specialistMeta, setSpecialistMeta] = useState('')
+  const requestedPostId = searchParams.get('post')
 
   useEffect(() => {
     fetch('/api/admin/content')
@@ -68,7 +82,11 @@ export default function AdminBlogPage() {
         const normalizedBlog = normalizeBlogSection(data.blog)
         setBlog(normalizedBlog)
         setServices(data.services || [])
-        setSelectedPostId(normalizedBlog.posts[0]?.id || null)
+        setSelectedPostId(
+          normalizedBlog.posts.some((post) => post.id === requestedPostId)
+            ? requestedPostId
+            : normalizedBlog.posts[0]?.id || null
+        )
         setSpecialistName(data.specialist?.name || data.specialist?.shortName || 'Психолог')
         setSpecialistTitle(data.specialist?.title || 'Психолог-консультант')
         setSpecialistMeta(
@@ -78,7 +96,7 @@ export default function AdminBlogPage() {
         )
       })
       .finally(() => setLoading(false))
-  }, [])
+  }, [requestedPostId])
 
   const selectedPost = blog.posts.find((post) => post.id === selectedPostId) || null
 
@@ -234,7 +252,12 @@ export default function AdminBlogPage() {
                           onToggleVisible={() =>
                             updatePost(post.id, (currentPost) => ({
                               ...currentPost,
-                              status: currentPost.status === 'published' ? 'draft' : 'published',
+                              status:
+                                currentPost.status === 'published'
+                                  ? currentPost.sourceMeta?.source === 'b17'
+                                    ? 'review'
+                                    : 'draft'
+                                  : 'published',
                             }))
                           }
                           onEdit={() => setSelectedPostId(post.id)}
@@ -311,7 +334,12 @@ export default function AdminBlogPage() {
                       onChange={(event) =>
                         updatePost(selectedPost.id, (currentPost) => ({
                           ...currentPost,
-                          status: event.target.value === 'published' ? 'published' : 'draft',
+                          status:
+                            event.target.value === 'published'
+                              ? 'published'
+                              : event.target.value === 'review'
+                                ? 'review'
+                                : 'draft',
                         }))
                       }
                       options={[
