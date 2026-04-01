@@ -1,24 +1,9 @@
 import type { Metadata } from 'next'
-import { Inter } from 'next/font/google'
-import { Cormorant_Garamond } from 'next/font/google'
 import './globals.css'
 import { HeaderWrapper } from '@/components/layout/HeaderWrapper'
 import { FooterWrapper } from '@/components/layout/FooterWrapper'
 
 export const dynamic = 'force-dynamic'
-
-const inter = Inter({
-  subsets: ['latin', 'cyrillic'],
-  variable: '--font-inter',
-  display: 'swap',
-})
-
-const cormorant = Cormorant_Garamond({
-  subsets: ['latin', 'cyrillic'],
-  weight: ['300', '400', '500', '600'],
-  variable: '--font-cormorant',
-  display: 'swap',
-})
 
 // Метаданные генерируются динамически из контента
 export async function generateMetadata(): Promise<Metadata> {
@@ -74,16 +59,19 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   }
 
   return (
-    <html lang="ru" className={`${inter.variable} ${cormorant.variable}`}>
+    <html lang="ru">
       <head>
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(personSchema) }} />
       </head>
-      <body
-        className="bg-[var(--color-cream-50)] text-[var(--color-stone-800)] antialiased"
-        style={{ fontFamily: 'var(--font-inter), Inter, sans-serif' }}
-      >
+      <body className="min-h-screen bg-[var(--color-cream-50)] text-[var(--color-stone-800)] antialiased">
+        <a
+          href="#main-content"
+          className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[60] focus:rounded-full focus:bg-[var(--color-sage-800)] focus:px-4 focus:py-2 focus:text-sm focus:text-white"
+        >
+          Перейти к содержимому
+        </a>
         <HeaderWrapper />
-        <main id="main-content" className="pt-16 md:pt-20">
+        <main id="main-content" className="pt-20 md:pt-24">
           {children}
         </main>
         <FooterWrapper />

@@ -42,55 +42,37 @@ export default function BlogPage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(blogJsonLd) }}
       />
 
-      <section className="relative overflow-hidden bg-[var(--color-cream-100)] px-4 py-16 md:py-24">
-        <div
-          className="pointer-events-none absolute right-0 top-0 h-[500px] w-[500px] rounded-full bg-[var(--color-sage-500)] opacity-[0.05] blur-[120px]"
-          aria-hidden="true"
-        />
-        <div
-          className="pointer-events-none absolute bottom-0 left-0 h-[400px] w-[400px] rounded-full bg-[var(--color-accent)] opacity-[0.04] blur-[100px]"
-          aria-hidden="true"
-        />
-
-        <div className="relative z-10 mx-auto max-w-6xl">
+      <section className="page-hero px-4 py-14 md:py-20">
+        <div className="section-shell relative z-10">
           <Breadcrumbs
             items={[{ label: 'Главная', href: '/' }, { label: 'Блог' }]}
             className="mb-8"
           />
 
-          <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_320px] lg:items-end">
+          <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_360px] lg:items-end">
             <div className="max-w-3xl space-y-6">
-              <div className="flex items-center gap-3">
-                <div
-                  className="h-1 w-8 rounded-full bg-gradient-to-r from-[var(--color-sage-500)] to-[var(--color-sage-300)]"
-                  aria-hidden="true"
-                />
-                <span className="text-xs font-semibold uppercase tracking-widest text-[var(--color-sage-600)]">
-                  Полезные материалы
-                </span>
-              </div>
+              <span className="eyebrow">
+                <span>Блог психолога</span>
+              </span>
 
-              <div className="inline-flex items-center gap-2.5 rounded-full border border-[var(--color-sage-200)] bg-white/70 px-5 py-3 text-sm font-medium text-[var(--color-sage-700)] shadow-sm backdrop-blur-md">
-                <span className="h-2 w-2 animate-pulse rounded-full bg-[var(--color-sage-500)]" />
-                <span>{posts.length} статей для блога и SEO</span>
-              </div>
+              <span className="meta-pill">{posts.length} статей</span>
 
-              <h1 className="font-serif text-5xl leading-[1.05] tracking-tight text-[var(--color-stone-800)] md:text-6xl lg:text-7xl">
+              <h1 className="text-[3rem] leading-[0.96] text-[var(--color-stone-800)] md:text-[4.1rem]">
                 {blogHeading}
               </h1>
 
-              <p className="max-w-2xl text-lg font-light leading-relaxed text-[var(--color-stone-500)] md:text-xl">
+              <p className="max-w-2xl text-lg leading-8 text-[var(--color-stone-500)] md:text-xl">
                 {blogDescription}
               </p>
             </div>
 
-            <div className="rounded-[32px] border border-[var(--color-stone-200)] bg-white/90 p-6 shadow-[var(--shadow-card)] backdrop-blur-sm">
+            <div className="panel-strong p-6">
               <div className="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--color-sage-600)]">
                 Зачем читать блог
               </div>
               <div className="mt-4 space-y-4 text-sm leading-7 text-[var(--color-stone-500)]">
-                <p>Статьи помогают лучше понять свое состояние и увидеть, что с этим можно делать дальше.</p>
-                <p>В каждом материале есть удобные переходы на консультацию, направления помощи и другие полезные страницы сайта.</p>
+                <p>Статьи помогают лучше понять своё состояние и увидеть, что с этим можно делать дальше.</p>
+                <p>Блог поддерживает доверие, экспертность и SEO, оставаясь частью общей спокойной дизайн-системы сайта.</p>
               </div>
               {latestPost ? (
                 <Link
@@ -106,12 +88,12 @@ export default function BlogPage() {
         </div>
       </section>
 
-      <section className="bg-white px-4 py-16">
-        <div className="mx-auto max-w-6xl">
+      <section className="section-space bg-white px-4">
+        <div className="section-shell">
           {posts.length > 0 ? (
             <BlogListClient posts={posts} categories={categories} tags={tags} />
           ) : (
-            <div className="rounded-[32px] border border-dashed border-[var(--color-stone-300)] bg-[var(--color-cream-100)] px-6 py-14 text-center">
+            <div className="panel-strong border-dashed px-6 py-14 text-center">
               <h2 className="font-serif text-4xl text-[var(--color-stone-800)]">
                 Блог скоро наполнится статьями
               </h2>

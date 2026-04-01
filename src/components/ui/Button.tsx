@@ -18,13 +18,13 @@ const variants = {
   primary: 'btn-primary',
   secondary: 'btn-secondary',
   ghost:
-    'inline-flex items-center justify-center gap-2 px-6 py-3 text-[var(--color-sage-700)] hover:text-[var(--color-sage-900)] hover:underline underline-offset-4 font-medium text-sm transition-colors duration-300 cursor-pointer',
+    'inline-flex items-center justify-center gap-2 rounded-full px-5 py-3 text-[var(--color-sage-700)] hover:bg-white/70 hover:text-[var(--color-sage-900)] font-medium text-sm transition-colors duration-300 cursor-pointer',
 }
 
 const sizes = {
-  sm: 'px-5 py-2.5 text-sm',
+  sm: 'min-h-[2.8rem] px-5 py-2.5 text-sm',
   md: '',
-  lg: 'px-9 py-4 text-base',
+  lg: 'min-h-[3.6rem] px-8 py-4 text-base',
 }
 
 export function Button({
@@ -44,13 +44,13 @@ export function Button({
   if (href) {
     if (external) {
       return (
-        <a href={href} className={baseClass} target="_blank" rel="noopener noreferrer">
+        <a href={href} className={baseClass} target="_blank" rel="noopener noreferrer" onClick={onClick}>
           {children}
         </a>
       )
     }
     return (
-      <Link href={href} className={baseClass}>
+      <Link href={href} className={baseClass} onClick={onClick}>
         {children}
       </Link>
     )

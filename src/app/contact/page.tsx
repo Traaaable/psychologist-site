@@ -128,42 +128,24 @@ export default function ContactPage() {
 
   return (
     <>
-      <section className="relative overflow-hidden bg-[var(--color-cream-100)] px-4 py-16 md:py-24">
-        <div
-          className="pointer-events-none absolute right-0 top-0 h-[500px] w-[500px] rounded-full bg-[var(--color-sage-500)] opacity-[0.04] blur-[120px]"
-          aria-hidden="true"
-        />
-        <div
-          className="pointer-events-none absolute bottom-0 left-0 h-[400px] w-[400px] rounded-full bg-[var(--color-accent)] opacity-[0.03] blur-[100px]"
-          aria-hidden="true"
-        />
-
-        <div className="relative z-10 mx-auto max-w-6xl">
+      <section className="page-hero px-4 py-14 md:py-20">
+        <div className="section-shell relative z-10">
           <Breadcrumbs
             items={[{ label: 'Главная', href: '/' }, { label: 'Контакты' }]}
             className="mb-8"
           />
           <div className="max-w-3xl space-y-6">
-            <div className="flex items-center gap-3">
-              <div
-                className="h-1 w-8 rounded-full bg-gradient-to-r from-[var(--color-sage-500)] to-[var(--color-sage-300)]"
-                aria-hidden="true"
-              />
-              <span className="text-xs font-semibold uppercase tracking-widest text-[var(--color-sage-600)]">
-                Связаться и записаться
-              </span>
-            </div>
+            <span className="eyebrow">
+              <span>Контакты и запись</span>
+            </span>
 
-            <div className="inline-flex items-center gap-2.5 rounded-full border border-[var(--color-sage-200)] bg-white/70 px-5 py-3 text-sm font-medium text-[var(--color-sage-700)] shadow-sm backdrop-blur-md">
-              <span className="h-2 w-2 animate-pulse rounded-full bg-[var(--color-sage-500)]" />
-              <span>{consultationFormat}</span>
-            </div>
+            <span className="meta-pill">{consultationFormat}</span>
 
-            <h1 className="font-serif text-5xl leading-[1.05] tracking-tight text-[var(--color-stone-800)] md:text-6xl lg:text-7xl">
+            <h1 className="text-[3rem] leading-[0.96] text-[var(--color-stone-800)] md:text-[4.1rem]">
               Контакты и запись
             </h1>
 
-            <p className="max-w-2xl text-lg font-light leading-relaxed text-[var(--color-stone-500)] md:text-xl">
+            <p className="max-w-2xl text-lg leading-8 text-[var(--color-stone-500)] md:text-xl">
               Можно заполнить форму или написать напрямую удобным способом. Здесь всегда
               отображаются актуальные контакты и формат приёма из админки.
             </p>
@@ -171,8 +153,8 @@ export default function ContactPage() {
         </div>
       </section>
 
-      <section className="bg-white px-4 py-20">
-        <div className="mx-auto max-w-6xl">
+      <section className="section-space bg-white px-4">
+        <div className="section-shell">
           <div className="grid grid-cols-1 gap-16 lg:grid-cols-5">
             <div className="lg:col-span-3">
               <ContactForm

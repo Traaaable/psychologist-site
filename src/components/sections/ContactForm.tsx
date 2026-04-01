@@ -79,7 +79,7 @@ export function ContactForm({
 
   if (isSubmitted) {
     return (
-      <div className={`py-12 text-center ${className}`}>
+      <div className={`py-8 text-center ${className}`}>
         <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-[var(--color-sage-100)]">
           <svg
             className="h-8 w-8 text-[var(--color-sage-600)]"
@@ -107,10 +107,10 @@ export function ContactForm({
       {(title || subtitle) && (
         <div className="mb-8">
           {title && (
-            <h2 className="mb-3 font-serif text-3xl text-[var(--color-stone-800)]">{title}</h2>
+            <h2 className="mb-3 font-serif text-[2.2rem] leading-[1.04] text-[var(--color-stone-800)]">{title}</h2>
           )}
           {subtitle && (
-            <p className="leading-relaxed text-[var(--color-stone-500)]">{subtitle}</p>
+            <p className="leading-8 text-[var(--color-stone-500)]">{subtitle}</p>
           )}
         </div>
       )}

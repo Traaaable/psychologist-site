@@ -1,74 +1,51 @@
 @import "tailwindcss";
 
-/* ============================
-   ДИЗАЙН-СИСТЕМА
-   Палитра: «Тепло и доверие»
-   ============================
-   Основные цвета:
-   - Stone (натуральный, тёплый нейтраль)
-   - Sage (мягкий зеленовато-серый)
-   - Warm Cream (тёплый кремовый фон)
-   - Soft Terracotta (мягкий терракотовый акцент)
-   ============================ */
-
 @theme {
-  /* ---- Цветовая палитра ---- */
-  --color-cream-50: #fdfcf8;
-  --color-cream-100: #faf7f0;
-  --color-cream-200: #f4eede;
-  --color-cream-300: #eadfc8;
-  --color-cream-400: #d9c9a8;
+  --color-cream-50: #f8f5ef;
+  --color-cream-100: #f2ede4;
+  --color-cream-200: #e8dece;
+  --color-cream-300: #dacbb3;
+  --color-cream-400: #c8b294;
 
-  --color-stone-100: #f5f4f1;
-  --color-stone-200: #e8e5df;
-  --color-stone-300: #d4cfc6;
-  --color-stone-400: #b8b2a7;
-  --color-stone-500: #8c8478;
-  --color-stone-600: #6b6358;
-  --color-stone-700: #4d4840;
-  --color-stone-800: #332f28;
-  --color-stone-900: #1a1814;
+  --color-stone-100: #f1ede6;
+  --color-stone-200: #ddd4c8;
+  --color-stone-300: #c2b6a7;
+  --color-stone-400: #998d7d;
+  --color-stone-500: #74695d;
+  --color-stone-600: #594f45;
+  --color-stone-700: #433b34;
+  --color-stone-800: #2e2924;
+  --color-stone-900: #181612;
 
-  --color-sage-100: #eef2ef;
-  --color-sage-200: #d8e4db;
-  --color-sage-300: #b8cfc0;
-  --color-sage-400: #92b4a0;
-  --color-sage-500: #6e9880;
-  --color-sage-600: #517a63;
-  --color-sage-700: #3d5f4c;
-  --color-sage-800: #2a4235;
-  --color-sage-900: #1a2a22;
+  --color-sage-100: #edf1eb;
+  --color-sage-200: #d7e0d7;
+  --color-sage-300: #bccabf;
+  --color-sage-400: #95a995;
+  --color-sage-500: #718871;
+  --color-sage-600: #566b56;
+  --color-sage-700: #3f5244;
+  --color-sage-800: #2d3b31;
+  --color-sage-900: #1d271f;
 
-  --color-warm-50: #fefdfb;
-  --color-warm-100: #fdf9f4;
+  --color-accent-light: #e5d6c2;
+  --color-accent: #b9926c;
+  --color-accent-dark: #946e4b;
 
-  --color-accent-light: #e8d5c4;
-  --color-accent: #c4956a;
-  --color-accent-dark: #a07040;
+  --font-sans: "Aptos", "Segoe UI", "Trebuchet MS", sans-serif;
+  --font-serif: "Iowan Old Style", "Palatino Linotype", "Book Antiqua", serif;
 
-  /* ---- Типографика ---- */
-  --font-sans: 'Inter', 'Helvetica Neue', Arial, sans-serif;
-  --font-serif: 'Cormorant Garamond', 'Georgia', serif;
+  --shadow-soft: 0 14px 40px rgba(43, 40, 32, 0.06);
+  --shadow-card: 0 24px 56px rgba(43, 40, 32, 0.08);
+  --shadow-card-hover: 0 32px 70px rgba(43, 40, 32, 0.1);
 
-  /* ---- Тени ---- */
-  --shadow-soft: 0 2px 20px rgba(51, 47, 40, 0.06);
-  --shadow-card: 0 4px 32px rgba(51, 47, 40, 0.08);
-  --shadow-card-hover: 0 8px 48px rgba(51, 47, 40, 0.12);
+  --radius-sm: 16px;
+  --radius-md: 24px;
+  --radius-lg: 32px;
+  --radius-xl: 40px;
 
-  /* ---- Скругления ---- */
-  --radius-sm: 8px;
-  --radius-md: 16px;
-  --radius-lg: 24px;
-  --radius-xl: 32px;
-
-  /* ---- Анимации ---- */
-  --transition-base: 300ms ease;
-  --transition-slow: 600ms ease;
+  --transition-base: 220ms ease;
+  --transition-slow: 420ms ease;
 }
-
-/* ============================
-   БАЗОВЫЕ СТИЛИ
-   ============================ */
 
 html {
   scroll-behavior: smooth;
@@ -77,168 +54,321 @@ html {
 }
 
 body {
-  background-color: var(--color-cream-50);
+  position: relative;
+  background:
+    radial-gradient(circle at top left, rgba(188, 202, 191, 0.32), transparent 28%),
+    radial-gradient(circle at top right, rgba(232, 222, 206, 0.65), transparent 32%),
+    linear-gradient(180deg, #faf8f3 0%, #f3eee6 100%);
   color: var(--color-stone-800);
   font-family: var(--font-sans);
-  line-height: 1.7;
+  line-height: 1.72;
+  text-rendering: optimizeLegibility;
 }
 
-/* ============================
-   ТИПОГРАФИКА
-   ============================ */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(rgba(67, 59, 52, 0.015) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(67, 59, 52, 0.015) 1px, transparent 1px);
+  background-size: 72px 72px;
+  mask-image: radial-gradient(circle at center, black 38%, transparent 88%);
+  opacity: 0.35;
+}
 
-h1, h2, h3 {
+h1,
+h2,
+h3 {
   font-family: var(--font-serif);
-  line-height: 1.25;
-  letter-spacing: -0.01em;
+  line-height: 1.04;
+  letter-spacing: -0.035em;
   color: var(--color-stone-800);
 }
 
-h4, h5, h6 {
+h4,
+h5,
+h6 {
   font-family: var(--font-sans);
-  font-weight: 500;
+  font-weight: 600;
   color: var(--color-stone-700);
 }
 
-/* ============================
-   КАСТОМНЫЕ КОМПОНЕНТНЫЕ СТИЛИ
-   ============================ */
+p {
+  text-wrap: pretty;
+}
 
-/* Декоративная линия-разделитель */
+a {
+  color: inherit;
+}
+
+img {
+  display: block;
+}
+
+.section-shell {
+  margin-inline: auto;
+  width: min(100% - 2rem, 74rem);
+}
+
+.section-space {
+  padding-block: clamp(4.5rem, 7vw, 7.5rem);
+}
+
+.page-hero {
+  position: relative;
+  overflow: hidden;
+  background:
+    linear-gradient(180deg, rgba(247, 244, 238, 0.96) 0%, rgba(242, 237, 228, 0.88) 100%);
+}
+
+.page-hero::before,
+.page-hero::after {
+  content: "";
+  position: absolute;
+  border-radius: 999px;
+  pointer-events: none;
+  filter: blur(100px);
+}
+
+.page-hero::before {
+  inset: -4rem auto auto -6rem;
+  width: 18rem;
+  height: 18rem;
+  background: rgba(188, 202, 191, 0.42);
+}
+
+.page-hero::after {
+  inset: auto -4rem -6rem auto;
+  width: 20rem;
+  height: 20rem;
+  background: rgba(229, 214, 194, 0.54);
+}
+
+.card-soft {
+  background: rgba(255, 255, 255, 0.86);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(221, 212, 200, 0.92);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-soft);
+  transition:
+    transform var(--transition-base),
+    box-shadow var(--transition-base),
+    border-color var(--transition-base),
+    background-color var(--transition-base);
+}
+
+.card-soft:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-card-hover);
+  border-color: rgba(149, 169, 149, 0.45);
+}
+
+.panel-strong {
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid rgba(221, 212, 200, 0.95);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+  backdrop-filter: blur(16px);
+}
+
+.panel-muted {
+  background: linear-gradient(180deg, rgba(237, 241, 235, 0.92) 0%, rgba(248, 245, 239, 0.92) 100%);
+  border: 1px solid rgba(215, 224, 215, 0.88);
+  border-radius: var(--radius-lg);
+}
+
+.panel-dark {
+  background: linear-gradient(180deg, rgba(47, 60, 50, 0.98) 0%, rgba(31, 40, 33, 0.98) 100%);
+  border: 1px solid rgba(113, 136, 113, 0.28);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+}
+
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 0.72rem;
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--color-sage-700);
+}
+
+.eyebrow::before {
+  content: "";
+  width: 2.5rem;
+  height: 1px;
+  background: linear-gradient(90deg, var(--color-sage-600), rgba(113, 136, 113, 0.18));
+}
+
+.meta-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.65rem;
+  min-height: 2.75rem;
+  border-radius: 999px;
+  border: 1px solid rgba(215, 224, 215, 0.95);
+  background: rgba(255, 255, 255, 0.78);
+  padding: 0.65rem 1rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--color-sage-700);
+  box-shadow: 0 10px 28px rgba(43, 40, 32, 0.05);
+  backdrop-filter: blur(12px);
+}
+
+.meta-pill::before {
+  content: "";
+  width: 0.55rem;
+  height: 0.55rem;
+  border-radius: 999px;
+  background: var(--color-sage-500);
+  box-shadow: 0 0 0 5px rgba(113, 136, 113, 0.13);
+}
+
 .divider-ornament {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 1rem;
   color: var(--color-sage-400);
 }
 
 .divider-ornament::before,
 .divider-ornament::after {
-  content: '';
+  content: "";
   flex: 1;
   height: 1px;
-  background: linear-gradient(to right, transparent, var(--color-stone-300), transparent);
+  background: linear-gradient(to right, transparent, rgba(153, 141, 125, 0.4), transparent);
 }
 
-/* Мягкий декоративный фон для секций */
 .section-bg-warm {
-  background-color: var(--color-cream-100);
+  background-color: rgba(250, 248, 243, 0.92);
 }
 
 .section-bg-sage {
-  background-color: var(--color-sage-100);
+  background-color: rgba(237, 241, 235, 0.9);
 }
 
-/* Карточки */
-.card-soft {
-  background: white;
-  border-radius: var(--radius-md);
-  box-shadow: var(--shadow-soft);
-  border: 1px solid var(--color-stone-200);
-  transition: box-shadow var(--transition-base), transform var(--transition-base);
-}
-
-.card-soft:hover {
-  box-shadow: var(--shadow-card-hover);
-  transform: translateY(-2px);
-}
-
-/* Кнопки */
 .btn-primary {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
-  padding: 14px 32px;
-  background-color: var(--color-sage-600);
+  gap: 0.6rem;
+  min-height: 3.25rem;
+  padding: 0.95rem 1.6rem;
+  border-radius: 999px;
+  border: 1px solid rgba(63, 82, 68, 0.12);
+  background: linear-gradient(180deg, var(--color-sage-700) 0%, var(--color-sage-800) 100%);
   color: white;
-  border-radius: var(--radius-sm);
+  font-size: 0.95rem;
   font-weight: 500;
-  font-size: 0.9375rem;
   letter-spacing: 0.01em;
-  transition: background-color var(--transition-base), transform var(--transition-base);
+  box-shadow: 0 16px 34px rgba(63, 82, 68, 0.16);
   text-decoration: none;
+  transition:
+    transform var(--transition-base),
+    box-shadow var(--transition-base),
+    filter var(--transition-base),
+    background-color var(--transition-base);
   cursor: pointer;
 }
 
 .btn-primary:hover {
-  background-color: var(--color-sage-700);
   transform: translateY(-1px);
+  box-shadow: 0 22px 42px rgba(63, 82, 68, 0.2);
+  filter: brightness(1.02);
 }
 
 .btn-primary:focus-visible {
-  outline: 2px solid var(--color-sage-400);
-  outline-offset: 3px;
+  outline: 2px solid rgba(113, 136, 113, 0.45);
+  outline-offset: 4px;
 }
 
 .btn-secondary {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
-  padding: 13px 31px;
-  background-color: transparent;
-  color: var(--color-sage-700);
-  border: 1.5px solid var(--color-sage-400);
-  border-radius: var(--radius-sm);
+  gap: 0.6rem;
+  min-height: 3.25rem;
+  padding: 0.95rem 1.55rem;
+  border-radius: 999px;
+  border: 1px solid rgba(195, 183, 168, 0.95);
+  background: rgba(255, 255, 255, 0.72);
+  color: var(--color-stone-700);
+  font-size: 0.95rem;
   font-weight: 500;
-  font-size: 0.9375rem;
   letter-spacing: 0.01em;
-  transition: background-color var(--transition-base), border-color var(--transition-base), transform var(--transition-base);
   text-decoration: none;
+  transition:
+    transform var(--transition-base),
+    border-color var(--transition-base),
+    background-color var(--transition-base),
+    box-shadow var(--transition-base);
   cursor: pointer;
 }
 
 .btn-secondary:hover {
-  background-color: var(--color-sage-100);
-  border-color: var(--color-sage-600);
   transform: translateY(-1px);
+  border-color: rgba(149, 169, 149, 0.56);
+  background: rgba(255, 255, 255, 0.96);
+  box-shadow: 0 14px 30px rgba(43, 40, 32, 0.05);
 }
 
 .btn-secondary:focus-visible {
-  outline: 2px solid var(--color-sage-400);
-  outline-offset: 3px;
+  outline: 2px solid rgba(113, 136, 113, 0.45);
+  outline-offset: 4px;
 }
 
-/* Поля форм */
 .input-field {
   width: 100%;
-  padding: 12px 16px;
-  background: white;
-  border: 1.5px solid var(--color-stone-300);
-  border-radius: var(--radius-sm);
+  min-height: 3.45rem;
+  border: 1px solid rgba(195, 183, 168, 0.82);
+  border-radius: 1.25rem;
+  background: rgba(255, 255, 255, 0.88);
+  padding: 0.95rem 1rem;
   font-size: 1rem;
   color: var(--color-stone-800);
-  transition: border-color var(--transition-base), box-shadow var(--transition-base);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.75);
   outline: none;
+  transition:
+    border-color var(--transition-base),
+    box-shadow var(--transition-base),
+    background-color var(--transition-base);
 }
 
 .input-field::placeholder {
-  color: var(--color-stone-400);
+  color: rgba(116, 105, 93, 0.62);
 }
 
 .input-field:focus {
-  border-color: var(--color-sage-400);
-  box-shadow: 0 0 0 3px rgba(110, 152, 128, 0.12);
+  border-color: rgba(113, 136, 113, 0.78);
+  background: white;
+  box-shadow:
+    0 0 0 4px rgba(188, 202, 191, 0.34),
+    inset 0 1px 0 rgba(255, 255, 255, 0.85);
 }
 
-/* Аккордеон FAQ */
 .faq-item {
-  border-bottom: 1px solid var(--color-stone-200);
+  border-bottom: 1px solid rgba(221, 212, 200, 0.85);
 }
 
 .faq-button {
   width: 100%;
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  padding: 20px 0;
-  text-align: left;
+  justify-content: space-between;
+  gap: 1.25rem;
+  padding: 1.35rem 0;
   background: none;
-  border: none;
+  border: 0;
   cursor: pointer;
+  text-align: left;
   color: var(--color-stone-800);
-  font-size: 1.0625rem;
+  font-size: 1.05rem;
   font-weight: 500;
   transition: color var(--transition-base);
 }
@@ -247,89 +377,70 @@ h4, h5, h6 {
   color: var(--color-sage-700);
 }
 
-/* Декоративные элементы */
-.leaf-decoration {
-  opacity: 0.08;
-  pointer-events: none;
-}
-
-/* Цитаты / блоки доверия */
 .quote-block {
-  border-left: 3px solid var(--color-sage-300);
-  padding-left: 24px;
+  margin: 0;
+  border-left: 2px solid rgba(149, 169, 149, 0.7);
+  padding-left: 1.25rem;
   color: var(--color-stone-600);
   font-style: italic;
-  font-size: 1.0625rem;
-  line-height: 1.75;
+  font-size: 1.08rem;
+  line-height: 1.85;
 }
 
-/* Бейджи / теги */
 .badge {
   display: inline-flex;
   align-items: center;
-  padding: 4px 12px;
-  border-radius: 100px;
-  font-size: 0.8125rem;
+  justify-content: center;
+  min-height: 1.95rem;
+  border-radius: 999px;
+  padding: 0.35rem 0.75rem;
+  font-size: 0.78rem;
   font-weight: 500;
+  line-height: 1;
   letter-spacing: 0.02em;
 }
 
 .badge-sage {
-  background-color: var(--color-sage-100);
+  background: rgba(215, 224, 215, 0.82);
   color: var(--color-sage-700);
 }
 
 .badge-stone {
-  background-color: var(--color-stone-100);
+  background: rgba(221, 212, 200, 0.55);
   color: var(--color-stone-600);
 }
 
 .badge-cream {
-  background-color: var(--color-cream-200);
+  background: rgba(232, 222, 206, 0.88);
   color: var(--color-stone-600);
 }
 
-/* Секции hero */
 .hero-gradient {
-  background: linear-gradient(145deg, var(--color-cream-100) 0%, var(--color-sage-100) 50%, var(--color-cream-200) 100%);
+  background:
+    radial-gradient(circle at top left, rgba(188, 202, 191, 0.28), transparent 26%),
+    radial-gradient(circle at 100% 10%, rgba(229, 214, 194, 0.48), transparent 26%),
+    linear-gradient(180deg, rgba(250, 248, 243, 0.96) 0%, rgba(243, 238, 230, 0.96) 100%);
 }
 
-/* Скролл анимации */
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(24px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.animate-fade-in-up {
-  animation: fadeInUp 0.6s ease forwards;
-}
-
-/* Фокус для доступности */
 *:focus-visible {
-  outline: 2px solid var(--color-sage-400);
-  outline-offset: 2px;
+  outline: 2px solid rgba(113, 136, 113, 0.5);
+  outline-offset: 3px;
 }
 
-/* Выделение текста */
 ::selection {
-  background-color: var(--color-sage-200);
+  background-color: rgba(188, 202, 191, 0.72);
   color: var(--color-sage-900);
 }
 
-/* Ссылки в тексте */
 .prose-link {
-  color: var(--color-sage-600);
+  color: var(--color-sage-700);
   text-decoration: underline;
-  text-underline-offset: 3px;
-  transition: color var(--transition-base);
+  text-underline-offset: 4px;
+  text-decoration-color: rgba(113, 136, 113, 0.45);
+  transition: color var(--transition-base), text-decoration-color var(--transition-base);
 }
 
 .prose-link:hover {
-  color: var(--color-sage-800);
+  color: var(--color-sage-900);
+  text-decoration-color: rgba(45, 59, 49, 0.6);
 }

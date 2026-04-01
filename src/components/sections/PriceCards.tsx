@@ -8,131 +8,107 @@ interface PriceCardsProps {
   subtitle?: string
 }
 
+function isNumericPrice(price: string) {
+  return Number.isFinite(Number(price.replace(/[^\d]/g, '')))
+}
+
 export function PriceCards({
   items,
-  title = 'Прозрачные цены',
-  subtitle = 'Без скрытых платежей. Стоимость согласовывается до начала работы.',
+  title = 'Услуги и условия',
+  subtitle = 'Ниже собраны актуальные форматы консультаций и стоимость. Все организационные моменты лучше обсудить заранее, чтобы вход в работу был спокойным и понятным.',
 }: PriceCardsProps) {
   return (
-    <section className="py-20 px-4 bg-[var(--color-cream-100)]" aria-labelledby="pricing-heading">
-      <div className="max-w-5xl mx-auto">
-        <SectionHeader
-          label="Стоимость"
-          title={title}
-          subtitle={subtitle}
-          className="mb-14"
-        />
+    <section className="section-space px-4" aria-labelledby="pricing-heading">
+      <div className="section-shell">
+        <SectionHeader label="Стоимость" title={title} subtitle={subtitle} align="left" className="mb-10" />
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {items.map((plan) => (
-            <div
-              key={plan.id}
-              className={`relative rounded-2xl p-8 flex flex-col ${
-                plan.isPopular
-                  ? 'bg-[var(--color-sage-700)] text-white shadow-xl'
-                  : 'bg-white border border-[var(--color-stone-200)] shadow-[var(--shadow-soft)]'
-              }`}
-            >
-              {plan.isPopular && (
-                <div className="absolute -top-3.5 left-1/2 -translate-x-1/2">
-                  <span className="bg-[var(--color-accent)] text-white text-xs font-semibold px-4 py-1.5 rounded-full tracking-wide whitespace-nowrap">
-                    Популярный выбор
-                  </span>
+        {items.length > 0 ? (
+          <div className={`grid gap-5 ${items.length > 1 ? 'md:grid-cols-2 xl:grid-cols-3' : ''}`}>
+            {items.map((plan) => (
+              <article
+                key={plan.id}
+                className={`p-7 md:p-8 ${plan.isPopular ? 'panel-dark text-white' : 'panel-strong'}`}
+              >
+                <div className="flex items-start justify-between gap-4">
+                  <div>
+                    <div className={`text-[0.72rem] uppercase tracking-[0.18em] ${plan.isPopular ? 'text-[var(--color-sage-200)]' : 'text-[var(--color-stone-400)]'}`}>
+                      {plan.format || 'Индивидуальная работа'}
+                    </div>
+                    <h3 className={`mt-4 text-[2rem] leading-[1.04] ${plan.isPopular ? 'text-white' : 'text-[var(--color-stone-800)]'}`}>
+                      {plan.title}
+                    </h3>
+                  </div>
+                  {plan.isPopular ? (
+                    <span className="badge !bg-white/12 !text-[var(--color-sage-100)]">
+                      Часто выбирают
+                    </span>
+                  ) : null}
                 </div>
-              )}
 
-              <div className="mb-6">
-                <h3
-                  className={`font-semibold text-lg mb-1 ${
-                    plan.isPopular ? 'text-white' : 'text-[var(--color-stone-800)]'
-                  }`}
-                >
-                  {plan.title}
-                </h3>
-                <div className="flex items-baseline gap-1 mt-3">
-                  <span
-                    className={`font-serif text-4xl font-normal ${
-                      plan.isPopular ? 'text-white' : 'text-[var(--color-stone-800)]'
-                    }`}
-                  >
+                <div className="mt-6 flex items-baseline gap-2">
+                  <span className={`font-serif text-[2.5rem] ${plan.isPopular ? 'text-white' : 'text-[var(--color-stone-800)]'}`}>
                     {plan.price}
                   </span>
-                  <span
-                    className={`text-sm ${
-                      plan.isPopular ? 'text-[var(--color-sage-200)]' : 'text-[var(--color-stone-400)]'
-                    }`}
-                  >
-                    ₽
-                  </span>
-                </div>
-                {'pricePerSession' in plan && plan.pricePerSession && (
-                  <p
-                    className={`text-sm mt-1 ${
-                      plan.isPopular ? 'text-[var(--color-sage-200)]' : 'text-[var(--color-stone-400)]'
-                    }`}
-                  >
-                    {plan.pricePerSession}
-                  </p>
-                )}
-              </div>
-
-              {/* Детали */}
-              <div
-                className={`flex flex-col gap-1 text-sm mb-6 ${
-                  plan.isPopular ? 'text-[var(--color-sage-100)]' : 'text-[var(--color-stone-500)]'
-                }`}
-              >
-                <span>{plan.duration}</span>
-                {plan.format && <span>{plan.format}</span>}
-                {plan.description && !plan.format && <span>{plan.description}</span>}
-              </div>
-
-              {/* Фичи */}
-              <ul className="flex flex-col gap-3 mb-8 flex-1">
-                {plan.features.map((feature, i) => (
-                  <li key={i} className="flex items-start gap-2.5 text-sm">
-                    <svg
-                      className={`w-4 h-4 flex-shrink-0 mt-0.5 ${
-                        plan.isPopular ? 'text-[var(--color-sage-200)]' : 'text-[var(--color-sage-500)]'
-                      }`}
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                      strokeWidth={2.5}
-                    >
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                    </svg>
-                    <span
-                      className={
-                        plan.isPopular ? 'text-[var(--color-sage-100)]' : 'text-[var(--color-stone-600)]'
-                      }
-                    >
-                      {feature}
+                  {isNumericPrice(plan.price) ? (
+                    <span className={plan.isPopular ? 'text-[var(--color-sage-200)]' : 'text-[var(--color-stone-400)]'}>
+                      ₽
                     </span>
-                  </li>
-                ))}
-              </ul>
+                  ) : null}
+                </div>
 
-              {plan.isPopular ? (
-                <Button
-                  href="/contact"
-                  className="!bg-white !text-[var(--color-sage-800)] hover:!bg-[var(--color-cream-100)] w-full"
-                  fullWidth
-                >
-                  Выбрать
-                </Button>
-              ) : (
-                <Button href="/contact" variant="secondary" fullWidth>
-                  Выбрать
-                </Button>
-              )}
+                <div className={`mt-3 text-sm leading-7 ${plan.isPopular ? 'text-[var(--color-stone-200)]' : 'text-[var(--color-stone-500)]'}`}>
+                  <div>{plan.duration}</div>
+                  {plan.description ? <div>{plan.description}</div> : null}
+                </div>
+
+                {plan.features.length > 0 ? (
+                  <ul className="mt-6 space-y-3">
+                    {plan.features.map((feature) => (
+                      <li key={feature} className="flex items-start gap-3 text-sm leading-7">
+                        <svg
+                          className={`mt-1 h-4 w-4 flex-shrink-0 ${plan.isPopular ? 'text-[var(--color-sage-200)]' : 'text-[var(--color-sage-600)]'}`}
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                          strokeWidth={2}
+                        >
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                        </svg>
+                        <span className={plan.isPopular ? 'text-[var(--color-stone-200)]' : 'text-[var(--color-stone-600)]'}>
+                          {feature}
+                        </span>
+                      </li>
+                    ))}
+                  </ul>
+                ) : null}
+
+                <div className="mt-8">
+                  <Button
+                    href="/contact"
+                    variant={plan.isPopular ? 'secondary' : 'primary'}
+                    fullWidth
+                    className={plan.isPopular ? '!border-white/12 !bg-white !text-[var(--color-sage-800)] hover:!bg-[var(--color-cream-100)]' : ''}
+                  >
+                    Записаться
+                  </Button>
+                </div>
+              </article>
+            ))}
+          </div>
+        ) : (
+          <div className="panel-strong p-7 md:p-8">
+            <h3 className="text-[2rem] leading-[1.04] text-[var(--color-stone-800)]">
+              Стоимость сейчас уточняется
+            </h3>
+            <p className="mt-4 max-w-2xl text-sm leading-7 text-[var(--color-stone-500)] md:text-base">
+              Структура раздела уже подготовлена, но фактические тарифы пока не заполнены.
+              Их можно уточнить до первой записи.
+            </p>
+            <div className="mt-8">
+              <Button href="/contact">Уточнить стоимость</Button>
             </div>
-          ))}
-        </div>
-
-        <p className="text-center text-sm text-[var(--color-stone-400)] mt-8">
-          Оплата возможна переводом на карту или наличными. Чек предоставляется по запросу.
-        </p>
+          </div>
+        )}
       </div>
     </section>
   )

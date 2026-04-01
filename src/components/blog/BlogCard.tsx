@@ -9,9 +9,9 @@ interface BlogCardProps {
 
 function CoverPlaceholder({ title, category }: { title: string; category: string }) {
   return (
-    <div className="flex h-full min-h-56 flex-col justify-end bg-[radial-gradient(circle_at_top_left,_rgba(110,152,128,0.18),_transparent_45%),linear-gradient(160deg,_var(--color-cream-100),_white_65%,_var(--color-sage-100))] p-6">
+    <div className="flex h-full min-h-64 flex-col justify-end bg-[radial-gradient(circle_at_top_left,_rgba(113,136,113,0.22),_transparent_42%),linear-gradient(160deg,_var(--color-cream-100),_white_68%,_var(--color-sage-100))] p-7">
       {category ? <span className="badge badge-sage mb-4 self-start">{category}</span> : null}
-      <div className="font-serif text-3xl leading-tight text-[var(--color-stone-800)]">
+      <div className="font-serif text-[2.15rem] leading-[1.04] text-[var(--color-stone-800)]">
         {title}
       </div>
     </div>
@@ -20,33 +20,33 @@ function CoverPlaceholder({ title, category }: { title: string; category: string
 
 export function BlogCard({ post }: BlogCardProps) {
   return (
-    <article className="card-soft group h-full overflow-hidden">
+    <article className="panel-strong group h-full overflow-hidden">
       <Link href={`/blog/${post.slug}`} className="flex h-full flex-col">
         <div className="relative overflow-hidden">
           {post.coverImage ? (
             <img
               src={post.coverImage}
               alt={post.coverAlt || post.title}
-              className="h-56 w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
+              className="h-64 w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
             />
           ) : (
             <CoverPlaceholder title={post.title} category={post.category} />
           )}
         </div>
 
-        <div className="flex flex-1 flex-col p-6">
-          <div className="mb-4 flex flex-wrap items-center gap-2 text-xs text-[var(--color-stone-400)]">
+        <div className="flex flex-1 flex-col p-7">
+          <div className="mb-5 flex flex-wrap items-center gap-2 text-xs text-[var(--color-stone-400)]">
             {post.category ? <span className="badge badge-sage">{post.category}</span> : null}
             <span>{formatBlogDate(post.publishedAt || post.updatedAt)}</span>
             <span>•</span>
             <span>{getBlogReadTime(post)} чтения</span>
           </div>
 
-          <h2 className="mb-3 font-serif text-2xl leading-snug text-[var(--color-stone-800)] transition-colors duration-200 group-hover:text-[var(--color-sage-700)]">
+          <h2 className="mb-4 font-serif text-[2rem] leading-[1.05] text-[var(--color-stone-800)] transition-colors duration-200 group-hover:text-[var(--color-sage-700)]">
             {post.title}
           </h2>
 
-          <p className="mb-5 flex-1 text-sm leading-7 text-[var(--color-stone-500)] md:text-base">
+          <p className="mb-6 flex-1 text-sm leading-7 text-[var(--color-stone-500)] md:text-base">
             {post.excerpt}
           </p>
 

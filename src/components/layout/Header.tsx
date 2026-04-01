@@ -1,7 +1,8 @@
 'use client'
 
 import Link from 'next/link'
-import { useState, useEffect } from 'react'
+import { usePathname } from 'next/navigation'
+import { useEffect, useState } from 'react'
 import { NAV_LINKS } from '@/lib/constants'
 import { Button } from '@/components/ui/Button'
 
@@ -11,91 +12,172 @@ interface HeaderProps {
   navLinks?: typeof NAV_LINKS
 }
 
-export function Header({ specialistName = 'Психолог', phone = '', navLinks = NAV_LINKS }: HeaderProps) {
+export function Header({
+  specialistName = 'Психолог',
+  phone = '',
+  navLinks = NAV_LINKS,
+}: HeaderProps) {
+  const pathname = usePathname()
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [isScrolled, setIsScrolled] = useState(false)
 
+  const primaryLinks = navLinks.filter((link) => link.href !== '/contact')
+
   useEffect(() => {
-    const handleScroll = () => setIsScrolled(window.scrollY > 20)
+    const handleScroll = () => setIsScrolled(window.scrollY > 16)
+    handleScroll()
     window.addEventListener('scroll', handleScroll, { passive: true })
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
 
   useEffect(() => {
     document.body.style.overflow = isMenuOpen ? 'hidden' : ''
-    return () => { document.body.style.overflow = '' }
+    return () => {
+      document.body.style.overflow = ''
+    }
   }, [isMenuOpen])
 
+  useEffect(() => {
+    setIsMenuOpen(false)
+  }, [pathname])
+
   return (
-    <header
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        isScrolled
-          ? 'bg-white/95 backdrop-blur-md shadow-[0_1px_20px_rgba(51,47,40,0.08)]'
-          : 'bg-transparent'
-      }`}
-    >
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16 md:h-20">
-          <Link href="/" className="flex flex-col leading-tight group" onClick={() => setIsMenuOpen(false)}>
-            <span className="font-serif text-xl text-[var(--color-stone-800)] group-hover:text-[var(--color-sage-700)] transition-colors duration-300">
-              {specialistName}
-            </span>
-            <span className="text-xs text-[var(--color-stone-400)] font-normal tracking-wide">психолог</span>
-          </Link>
-
-          <nav className="hidden md:flex items-center gap-7" aria-label="Основная навигация">
-            {navLinks.slice(0, -1).map((link) => (
-              <Link key={link.href} href={link.href}
-                className="text-sm text-[var(--color-stone-600)] hover:text-[var(--color-sage-700)] transition-colors duration-200 font-medium">
-                {link.label}
-              </Link>
-            ))}
-          </nav>
-
-          <div className="hidden md:flex items-center gap-4">
-            {phone && (
-              <a href={`tel:${phone}`} className="text-sm text-[var(--color-stone-500)] hover:text-[var(--color-sage-700)] transition-colors duration-200">
-                {phone}
-              </a>
-            )}
-            <Button href="/contact" size="sm">Записаться</Button>
-          </div>
-
-          <button
-            className="md:hidden flex flex-col justify-center items-center w-10 h-10 gap-1.5 rounded-lg hover:bg-[var(--color-stone-100)] transition-colors"
-            onClick={() => setIsMenuOpen(!isMenuOpen)}
-            aria-label={isMenuOpen ? 'Закрыть меню' : 'Открыть меню'}
-            aria-expanded={isMenuOpen}
-          >
-            <span className={`block w-5 h-0.5 bg-[var(--color-stone-700)] transition-all duration-300 origin-center ${isMenuOpen ? 'rotate-45 translate-y-2' : ''}`} />
-            <span className={`block w-5 h-0.5 bg-[var(--color-stone-700)] transition-all duration-300 ${isMenuOpen ? 'opacity-0 scale-x-0' : ''}`} />
-            <span className={`block w-5 h-0.5 bg-[var(--color-stone-700)] transition-all duration-300 origin-center ${isMenuOpen ? '-rotate-45 -translate-y-2' : ''}`} />
-          </button>
-        </div>
-      </div>
-
+    <header className="fixed inset-x-0 top-0 z-50 px-4 py-3 md:px-6 md:py-4">
       <div
-        className={`md:hidden fixed inset-0 top-16 bg-white/98 backdrop-blur-md transition-all duration-300 ${
-          isMenuOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
+        className={`section-shell transition-all duration-300 ${
+          isScrolled || isMenuOpen ? 'translate-y-0' : 'translate-y-0'
         }`}
-        aria-hidden={!isMenuOpen}
       >
-        <nav className="flex flex-col px-6 py-8 gap-1" aria-label="Мобильная навигация">
-          {navLinks.map((link) => (
-            <Link key={link.href} href={link.href} onClick={() => setIsMenuOpen(false)}
-              className="py-4 text-lg text-[var(--color-stone-700)] hover:text-[var(--color-sage-700)] border-b border-[var(--color-stone-100)] transition-colors duration-200 font-medium">
-              {link.label}
+        <div
+          className={`relative rounded-[28px] border px-4 py-3 transition-all duration-300 md:px-5 md:py-4 ${
+            isScrolled || isMenuOpen
+              ? 'border-[rgba(221,212,200,0.92)] bg-[rgba(248,245,239,0.88)] shadow-[var(--shadow-card)] backdrop-blur-xl'
+              : 'border-[rgba(255,255,255,0.6)] bg-[rgba(250,248,243,0.72)] shadow-[0_14px_40px_rgba(43,40,32,0.05)] backdrop-blur-lg'
+          }`}
+        >
+          <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-4 lg:grid-cols-[220px_minmax(0,1fr)_auto]">
+            <Link href="/" className="min-w-0 leading-tight">
+              <span className="block truncate font-serif text-[1.45rem] text-[var(--color-stone-800)] md:text-[1.55rem]">
+                {specialistName}
+              </span>
+              <span className="mt-1 block text-[0.7rem] uppercase tracking-[0.22em] text-[var(--color-stone-400)]">
+                Частная психологическая практика
+              </span>
             </Link>
-          ))}
-          <div className="mt-6 flex flex-col gap-3">
-            <Button href="/contact" fullWidth onClick={() => setIsMenuOpen(false)}>
-              Записаться на консультацию
-            </Button>
-            {phone && (
-              <a href={`tel:${phone}`} className="text-center text-[var(--color-stone-500)] py-2">{phone}</a>
-            )}
+
+            <nav className="hidden items-center justify-center gap-1 lg:flex" aria-label="Основная навигация">
+              {primaryLinks.map((link) => {
+                const isActive = pathname === link.href
+                return (
+                  <Link
+                    key={link.href}
+                    href={link.href}
+                    className={`rounded-full px-4 py-2.5 text-sm transition-all duration-200 ${
+                      isActive
+                        ? 'bg-[rgba(215,224,215,0.88)] text-[var(--color-sage-800)]'
+                        : 'text-[var(--color-stone-600)] hover:bg-white/70 hover:text-[var(--color-sage-700)]'
+                    }`}
+                  >
+                    {link.label}
+                  </Link>
+                )
+              })}
+            </nav>
+
+            <div className="hidden items-center gap-3 lg:flex">
+              {phone ? (
+                <a
+                  href={`tel:${phone}`}
+                  className="rounded-full border border-[rgba(221,212,200,0.95)] bg-white/70 px-4 py-2.5 text-sm text-[var(--color-stone-600)] transition-colors hover:text-[var(--color-sage-700)]"
+                >
+                  {phone}
+                </a>
+              ) : null}
+              <Button href="/contact" size="sm">
+                Записаться
+              </Button>
+            </div>
+
+            <button
+              type="button"
+              className="flex h-11 w-11 items-center justify-center rounded-full border border-[rgba(221,212,200,0.95)] bg-white/75 text-[var(--color-stone-700)] transition-colors hover:text-[var(--color-sage-700)] lg:hidden"
+              onClick={() => setIsMenuOpen((value) => !value)}
+              aria-label={isMenuOpen ? 'Закрыть меню' : 'Открыть меню'}
+              aria-expanded={isMenuOpen}
+            >
+              <div className="relative h-4 w-5">
+                <span
+                  className={`absolute left-0 top-0 h-0.5 w-5 rounded-full bg-current transition-all duration-300 ${
+                    isMenuOpen ? 'translate-y-[7px] rotate-45' : ''
+                  }`}
+                />
+                <span
+                  className={`absolute left-0 top-[7px] h-0.5 w-5 rounded-full bg-current transition-all duration-300 ${
+                    isMenuOpen ? 'opacity-0' : ''
+                  }`}
+                />
+                <span
+                  className={`absolute left-0 top-[14px] h-0.5 w-5 rounded-full bg-current transition-all duration-300 ${
+                    isMenuOpen ? '-translate-y-[7px] -rotate-45' : ''
+                  }`}
+                />
+              </div>
+            </button>
           </div>
-        </nav>
+
+          <div
+            className={`overflow-hidden transition-all duration-300 lg:hidden ${
+              isMenuOpen ? 'mt-4 max-h-[80vh] opacity-100' : 'max-h-0 opacity-0'
+            }`}
+          >
+            <div className="rounded-[24px] border border-[rgba(221,212,200,0.85)] bg-white/88 p-3 shadow-[var(--shadow-soft)]">
+              <nav className="space-y-1" aria-label="Мобильная навигация">
+                {navLinks.map((link) => {
+                  const isActive = pathname === link.href
+                  return (
+                    <Link
+                      key={link.href}
+                      href={link.href}
+                      onClick={() => setIsMenuOpen(false)}
+                      className={`flex items-center justify-between rounded-[18px] px-4 py-3 text-sm transition-colors ${
+                        isActive
+                          ? 'bg-[rgba(215,224,215,0.78)] text-[var(--color-sage-800)]'
+                          : 'text-[var(--color-stone-700)] hover:bg-[rgba(242,237,228,0.8)]'
+                      }`}
+                    >
+                      <span>{link.label}</span>
+                      <span aria-hidden="true" className="text-[var(--color-stone-400)]">
+                        →
+                      </span>
+                    </Link>
+                  )
+                })}
+              </nav>
+
+              <div className="mt-4 rounded-[20px] bg-[var(--color-cream-50)] p-4">
+                <div className="text-[0.72rem] uppercase tracking-[0.22em] text-[var(--color-stone-400)]">
+                  Спокойная запись без спешки
+                </div>
+                <p className="mt-3 text-sm leading-6 text-[var(--color-stone-500)]">
+                  Можно заполнить форму или связаться напрямую, если так удобнее.
+                </p>
+                <div className="mt-4 flex flex-col gap-3">
+                  <Button href="/contact" fullWidth onClick={() => setIsMenuOpen(false)}>
+                    Записаться на консультацию
+                  </Button>
+                  {phone ? (
+                    <a
+                      href={`tel:${phone}`}
+                      className="text-center text-sm text-[var(--color-stone-500)] underline decoration-[rgba(113,136,113,0.35)] underline-offset-4"
+                    >
+                      {phone}
+                    </a>
+                  ) : null}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </header>
   )

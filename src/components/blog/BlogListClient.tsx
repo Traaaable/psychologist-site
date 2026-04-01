@@ -55,7 +55,7 @@ export function BlogListClient({ posts, categories, tags }: BlogListClientProps)
 
   return (
     <div className="space-y-10">
-      <section className="rounded-[32px] border border-[var(--color-stone-200)] bg-white p-5 shadow-[var(--shadow-soft)] md:p-7">
+      <section className="panel-strong p-5 md:p-7">
         <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-end">
           <div className="space-y-4">
             <label className="block">
@@ -77,8 +77,8 @@ export function BlogListClient({ posts, categories, tags }: BlogListClientProps)
                 onClick={() => setActiveCategory('all')}
                 className={`rounded-full px-4 py-2 text-sm transition-colors ${
                   activeCategory === 'all'
-                    ? 'bg-[var(--color-sage-600)] text-white'
-                    : 'bg-[var(--color-stone-100)] text-[var(--color-stone-600)] hover:bg-[var(--color-stone-200)]'
+                    ? 'bg-[var(--color-sage-700)] text-white'
+                    : 'bg-[var(--color-cream-50)] text-[var(--color-stone-600)] hover:bg-white'
                 }`}
               >
                 Все темы
@@ -90,8 +90,8 @@ export function BlogListClient({ posts, categories, tags }: BlogListClientProps)
                   onClick={() => setActiveCategory(category)}
                   className={`rounded-full px-4 py-2 text-sm transition-colors ${
                     activeCategory === category
-                      ? 'bg-[var(--color-sage-600)] text-white'
-                      : 'bg-[var(--color-stone-100)] text-[var(--color-stone-600)] hover:bg-[var(--color-stone-200)]'
+                      ? 'bg-[var(--color-sage-700)] text-white'
+                      : 'bg-[var(--color-cream-50)] text-[var(--color-stone-600)] hover:bg-white'
                   }`}
                 >
                   {category}
@@ -110,7 +110,7 @@ export function BlogListClient({ posts, categories, tags }: BlogListClientProps)
                   className={`rounded-full border px-3 py-1.5 text-xs transition-colors ${
                     !activeTag
                       ? 'border-[var(--color-sage-500)] bg-[var(--color-sage-100)] text-[var(--color-sage-700)]'
-                      : 'border-[var(--color-stone-200)] text-[var(--color-stone-500)] hover:border-[var(--color-stone-300)]'
+                      : 'border-[var(--color-stone-200)] bg-white/80 text-[var(--color-stone-500)] hover:border-[var(--color-stone-300)]'
                   }`}
                 >
                   Все
@@ -123,7 +123,7 @@ export function BlogListClient({ posts, categories, tags }: BlogListClientProps)
                     className={`rounded-full border px-3 py-1.5 text-xs transition-colors ${
                       activeTag === tag
                         ? 'border-[var(--color-sage-500)] bg-[var(--color-sage-100)] text-[var(--color-sage-700)]'
-                        : 'border-[var(--color-stone-200)] text-[var(--color-stone-500)] hover:border-[var(--color-stone-300)]'
+                        : 'border-[var(--color-stone-200)] bg-white/80 text-[var(--color-stone-500)] hover:border-[var(--color-stone-300)]'
                     }`}
                   >
                     #{tag}
@@ -186,7 +186,7 @@ export function BlogListClient({ posts, categories, tags }: BlogListClientProps)
           ) : null}
         </section>
       ) : (
-        <section className="rounded-[32px] border border-dashed border-[var(--color-stone-300)] bg-white px-6 py-12 text-center">
+        <section className="panel-strong border-dashed px-6 py-12 text-center">
           <h2 className="font-serif text-3xl text-[var(--color-stone-800)]">
             Пока ничего не найдено
           </h2>

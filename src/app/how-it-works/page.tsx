@@ -6,9 +6,9 @@ import { generatePageMetadata } from '@/lib/metadata'
 
 export function generateMetadata(): Metadata {
   return generatePageMetadata({
-    title: 'Как проходят консультации',
+    title: 'Методы работы',
     description:
-      'Понятно и спокойно о том, как устроена первая встреча, в каком формате проходят консультации и как обычно строится работа с психологом.',
+      'Понятно и спокойно о том, как строится работа с психологом, какие методы используются и что происходит на консультациях.',
     path: '/how-it-works',
   })
 }
@@ -18,253 +18,254 @@ export default function HowItWorksPage() {
   const { contacts, location, pricing } = content
 
   const consultationFormat = getConsultationFormatLabel(location.consultationFormat)
+  const sessionDuration = pricing.find((plan) => plan.visible)?.duration || '50-60 минут'
+  const workingHours = contacts.workingHours || 'Время подбирается индивидуально'
   const locationLabel =
     location.showAddress && location.address ? `${location.city}, ${location.address}` : location.city
-  const sessionDuration = pricing.find((plan) => plan.visible)?.duration || '50-60 минут'
-  const workingHours = contacts.workingHours || 'Время подбираем индивидуально'
-  const isOnlineAvailable = location.consultationFormat !== 'offline'
-  const isOfflineAvailable = location.consultationFormat !== 'online'
 
-  const firstSessionBlocks = [
+  const methodCards = [
+    {
+      title: 'Интегративный подход',
+      description:
+        'Работа выстраивается не по жёсткому шаблону, а под ваш запрос, состояние и темп. Это помогает сохранить и точность, и человеческое отношение.',
+    },
+    {
+      title: 'КПТ-техники',
+      description:
+        'Используются там, где важно заметить связь между мыслями, эмоциями, телом и повседневными реакциями, которые поддерживают тревогу или истощение.',
+    },
+    {
+      title: 'Гештальт-подход',
+      description:
+        'Помогает работать с чувствами, границами, контактом и повторяющимися сценариями в отношениях без упрощения и давления.',
+    },
+  ]
+
+  const sessionBlocks = [
     {
       title: 'Что происходит на первой встрече',
       items: [
-        'Вы рассказываете о себе и о том, что сейчас беспокоит.',
-        'Я задаю уточняющие вопросы, чтобы лучше понять ситуацию.',
-        'Мы обсуждаем ваш запрос и то, каким может быть формат работы.',
-        'Вместе смотрим, подходит ли вам такой способ взаимодействия.',
+        'Вы рассказываете о себе и о том, что сейчас особенно беспокоит.',
+        'Я задаю уточняющие вопросы, чтобы лучше понять ситуацию и контекст.',
+        'Мы вместе смотрим, как может быть сформулирован запрос на работу.',
+        'Вы оцениваете, подходит ли вам такой стиль взаимодействия.',
       ],
     },
     {
-      title: 'Чего не нужно делать заранее',
+      title: 'Чего от вас не требуется',
       items: [
-        'Готовить идеальный рассказ о себе.',
-        'Точно знать формулировку проблемы.',
-        'Скрывать то, что кажется неважным или неловким.',
-        'Бояться сказать что-то не так.',
+        'Приходить с идеально сформулированной проблемой.',
+        'Заранее знать, сколько встреч понадобится.',
+        'Сразу рассказывать всё личное, если пока нет готовности.',
+        'Подстраиваться под «правильный» формат разговора.',
       ],
     },
   ]
 
-  const workflowStats = [
+  const workflow = [
     {
-      label: 'Длительность',
-      value: sessionDuration,
-      desc: 'Стандартная продолжительность одной встречи.',
+      step: '01',
+      title: 'Фокус и запрос',
+      description:
+        'Сначала мы понимаем, что именно сейчас нуждается в внимании: тревога, выгорание, отношения, внутренний конфликт или жизненный переход.',
     },
     {
-      label: 'Формат',
-      value: consultationFormat,
-      desc: location.formatNote || 'Формат выбираем под ваш запрос и обстоятельства.',
+      step: '02',
+      title: 'Понимание механики',
+      description:
+        'Дальше исследуем, как устроен ваш опыт: что запускает напряжение, как вы реагируете и что поддерживает текущий сценарий.',
     },
     {
-      label: 'График',
-      value: workingHours,
-      desc: 'Время встреч согласовываем заранее.',
+      step: '03',
+      title: 'Новые опоры',
+      description:
+        'Постепенно появляются более устойчивые способы выдерживать сложные эмоции, обозначать границы и опираться на себя.',
+    },
+    {
+      step: '04',
+      title: 'Закрепление изменений',
+      description:
+        'Когда становится больше ясности и устойчивости, мы смотрим, как эти изменения удерживаются в жизни вне кабинета или видеозвонка.',
+    },
+  ]
+
+  const principles = [
+    {
+      title: 'Без давления',
+      description:
+        'Решение о продолжении работы всегда остаётся за вами. Первая встреча не обязывает продолжать терапию.',
+    },
+    {
+      title: 'Конфиденциальность',
+      description:
+        'Всё, что обсуждается на консультациях, остаётся между нами. Это базовый профессиональный стандарт.',
+    },
+    {
+      title: 'Понятный формат',
+      description:
+        'Длительность, формат и организационные детали обсуждаются заранее, без скрытых условий и двусмысленности.',
     },
   ]
 
   return (
     <>
-      <section className="relative overflow-hidden bg-[var(--color-sage-100)] px-4 py-16 md:py-24">
-        <div
-          className="pointer-events-none absolute right-0 top-0 h-[500px] w-[500px] rounded-full bg-[var(--color-sage-500)] opacity-[0.04] blur-[120px]"
-          aria-hidden="true"
-        />
-        <div
-          className="pointer-events-none absolute bottom-0 left-0 h-[400px] w-[400px] rounded-full bg-[var(--color-accent)] opacity-[0.03] blur-[100px]"
-          aria-hidden="true"
-        />
-
-        <div className="relative z-10 mx-auto max-w-6xl">
+      <section className="page-hero px-4 py-14 md:py-20">
+        <div className="section-shell relative z-10">
           <Breadcrumbs
-            items={[{ label: 'Главная', href: '/' }, { label: 'Как проходят консультации' }]}
+            items={[{ label: 'Главная', href: '/' }, { label: 'Методы работы' }]}
             className="mb-8"
           />
-          <div className="max-w-3xl space-y-6">
-            <div className="flex items-center gap-3">
-              <div
-                className="h-1 w-8 rounded-full bg-gradient-to-r from-[var(--color-sage-500)] to-[var(--color-sage-300)]"
-                aria-hidden="true"
-              />
-              <span className="text-xs font-semibold uppercase tracking-widest text-[var(--color-sage-600)]">
-                Как это устроено
+
+          <div className="grid gap-6 lg:grid-cols-[minmax(0,1.05fr)_360px] lg:items-end">
+            <div className="max-w-3xl space-y-6">
+              <span className="eyebrow">
+                <span>Методы работы</span>
               </span>
+              <span className="meta-pill">{consultationFormat}</span>
+
+              <h1 className="text-[3rem] leading-[0.96] text-[var(--color-stone-800)] md:text-[4.1rem]">
+                Понятно о том, как именно строится работа и что происходит на консультациях
+              </h1>
+
+              <p className="max-w-2xl text-lg leading-8 text-[var(--color-stone-500)] md:text-xl">
+                Этот раздел создан для взрослой аудитории, которой важно заранее понимать
+                механику процесса: на чём основан подход, как проходит путь клиента и чего ждать
+                от первых встреч.
+              </p>
             </div>
 
-            <div className="inline-flex items-center gap-2.5 rounded-full border border-[var(--color-sage-200)] bg-white/70 px-5 py-3 text-sm font-medium text-[var(--color-sage-700)] shadow-sm backdrop-blur-md">
-              <span className="h-2 w-2 animate-pulse rounded-full bg-[var(--color-sage-500)]" />
-              <span>{consultationFormat}</span>
+            <div className="panel-strong p-6 md:p-7">
+              <div className="text-[0.72rem] uppercase tracking-[0.2em] text-[var(--color-stone-400)]">
+                Базовые ориентиры
+              </div>
+              <div className="mt-5 space-y-4">
+                {[
+                  { label: 'Формат', value: consultationFormat },
+                  { label: 'Длительность', value: sessionDuration },
+                  { label: 'График', value: workingHours },
+                ].map((item) => (
+                  <div key={item.label} className="rounded-[22px] bg-[var(--color-cream-50)] px-5 py-4">
+                    <div className="text-[0.72rem] uppercase tracking-[0.18em] text-[var(--color-stone-400)]">
+                      {item.label}
+                    </div>
+                    <div className="mt-2 font-serif text-[1.9rem] text-[var(--color-stone-800)]">
+                      {item.value}
+                    </div>
+                  </div>
+                ))}
+                {locationLabel ? (
+                  <p className="text-sm leading-7 text-[var(--color-stone-500)]">
+                    Локация: <span className="text-[var(--color-stone-700)]">{locationLabel}</span>
+                  </p>
+                ) : null}
+              </div>
             </div>
-
-            <h1 className="font-serif text-5xl leading-[1.05] tracking-tight text-[var(--color-stone-800)] md:text-6xl lg:text-7xl">
-              Как проходят консультации
-            </h1>
-
-            <p className="max-w-2xl text-lg font-light leading-relaxed text-[var(--color-stone-500)] md:text-xl">
-              Спокойно и без загадок о том, чего ждать от первой встречи, как обычно строится
-              работа и какой формат можно выбрать.
-            </p>
           </div>
         </div>
       </section>
 
-      <section className="bg-white px-4 py-20">
-        <div className="mx-auto max-w-4xl">
-          <h2 className="mb-6 font-serif text-4xl text-[var(--color-stone-800)]">
-            Первая консультация
-          </h2>
-          <p className="mb-10 text-lg leading-relaxed text-[var(--color-stone-500)]">
-            Первая встреча ни к чему не обязывает. Это знакомство, возможность рассказать о
-            том, что вас беспокоит, и понять, подходит ли вам такой формат работы.
-          </p>
+      <section className="section-space px-4">
+        <div className="section-shell">
+          <div className="mb-10 max-w-3xl">
+            <span className="eyebrow">
+              <span>Подход</span>
+            </span>
+            <h2 className="mt-4 text-[2.8rem] leading-[1.02] text-[var(--color-stone-800)] md:text-[3.6rem]">
+              На чём основана работа
+            </h2>
+            <p className="mt-4 text-base leading-8 text-[var(--color-stone-500)] md:text-lg">
+              Подход описан обычным человеческим языком, без туманности и чрезмерной академичности.
+            </p>
+          </div>
 
-          <div className="mb-12 grid grid-cols-1 gap-6 md:grid-cols-2">
-            {firstSessionBlocks.map((block) => (
-              <div key={block.title} className="rounded-2xl bg-[var(--color-cream-100)] p-7">
-                <h3 className="mb-4 font-semibold text-[var(--color-stone-800)]">
+          <div className="grid gap-5 md:grid-cols-3">
+            {methodCards.map((card) => (
+              <article key={card.title} className="card-soft p-7 md:p-8">
+                <h3 className="text-[2rem] leading-[1.04] text-[var(--color-stone-800)]">
+                  {card.title}
+                </h3>
+                <p className="mt-4 text-sm leading-7 text-[var(--color-stone-500)] md:text-base">
+                  {card.description}
+                </p>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="section-bg-warm section-space px-4">
+        <div className="section-shell">
+          <div className="grid gap-6 lg:grid-cols-2">
+            {sessionBlocks.map((block) => (
+              <div key={block.title} className="panel-strong px-6 py-8 md:px-8 md:py-10">
+                <h2 className="text-[2.2rem] leading-[1.04] text-[var(--color-stone-800)]">
                   {block.title}
-                </h3>
-                <ul className="space-y-2.5">
+                </h2>
+                <ul className="mt-6 space-y-3">
                   {block.items.map((item) => (
-                    <li
-                      key={item}
-                      className="flex items-start gap-2.5 text-sm text-[var(--color-stone-500)]"
-                    >
-                      <div className="mt-2 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-[var(--color-sage-400)]" />
-                      {item}
+                    <li key={item} className="flex items-start gap-3 text-sm leading-7 text-[var(--color-stone-500)] md:text-base">
+                      <span className="mt-3 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-[var(--color-sage-500)]" />
+                      <span>{item}</span>
                     </li>
                   ))}
                 </ul>
               </div>
             ))}
           </div>
+        </div>
+      </section>
 
-          <div className="rounded-2xl bg-[var(--color-sage-100)] p-8">
-            <p className="leading-relaxed text-[var(--color-stone-600)]">
-              <span className="font-semibold text-[var(--color-stone-800)]">Важно: </span>
-              после первой встречи решение о продолжении работы всегда остаётся за вами. Никакого
-              давления или обязательств нет.
+      <section className="section-space px-4">
+        <div className="section-shell">
+          <div className="mb-10 max-w-3xl">
+            <span className="eyebrow">
+              <span>Путь клиента</span>
+            </span>
+            <h2 className="mt-4 text-[2.8rem] leading-[1.02] text-[var(--color-stone-800)] md:text-[3.6rem]">
+              Как развивается работа от встречи к встрече
+            </h2>
+            <p className="mt-4 text-base leading-8 text-[var(--color-stone-500)] md:text-lg">
+              Это не жёсткая схема, а понятная логика движения, которая помогает взрослому клиенту видеть процесс яснее.
             </p>
           </div>
-        </div>
-      </section>
 
-      <section className="bg-[var(--color-cream-100)] px-4 py-20">
-        <div className="mx-auto max-w-4xl">
-          <h2 className="mb-12 font-serif text-4xl text-[var(--color-stone-800)]">
-            Форматы работы
-          </h2>
-
-          <div
-            className={`grid grid-cols-1 gap-6 ${isOnlineAvailable && isOfflineAvailable ? 'md:grid-cols-2' : ''}`}
-          >
-            {isOnlineAvailable && (
-              <div className="rounded-2xl border border-[var(--color-stone-100)] bg-white p-8 shadow-[var(--shadow-soft)]">
-                <div className="mb-6 flex h-12 w-12 items-center justify-center rounded-xl bg-[var(--color-sage-100)]">
-                  <svg className="h-6 w-6 text-[var(--color-sage-600)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 17.25v1.007a3 3 0 01-.879 2.122L7.5 21h9l-.621-.621A3 3 0 0115 18.257V17.25m6-12V15a2.25 2.25 0 01-2.25 2.25H5.25A2.25 2.25 0 013 15V5.25m18 0A2.25 2.25 0 0018.75 3H5.25A2.25 2.25 0 003 5.25m18 0H3" />
-                  </svg>
-                </div>
-                <h3 className="mb-4 text-xl font-semibold text-[var(--color-stone-800)]">Онлайн</h3>
-                <p className="mb-5 text-sm leading-relaxed text-[var(--color-stone-500)]">
-                  Консультации проходят по видеосвязи. Это удобный формат, если важна гибкость,
-                  нет возможности приезжать лично или вы просто предпочитаете встречаться из
-                  привычного пространства.
-                </p>
-                <ul className="space-y-2 text-sm text-[var(--color-stone-500)]">
-                  {[
-                    'Можно подключиться из любого города',
-                    'Не нужно тратить время на дорогу',
-                    'Качество работы сопоставимо с очными встречами',
-                    workingHours,
-                  ].map((item) => (
-                    <li key={item} className="flex items-center gap-2">
-                      <svg className="h-4 w-4 text-[var(--color-sage-500)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                      </svg>
-                      {item}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
-
-            {isOfflineAvailable && (
-              <div className="rounded-2xl border border-[var(--color-stone-100)] bg-white p-8 shadow-[var(--shadow-soft)]">
-                <div className="mb-6 flex h-12 w-12 items-center justify-center rounded-xl bg-[var(--color-sage-100)]">
-                  <svg className="h-6 w-6 text-[var(--color-sage-600)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
-                  </svg>
-                </div>
-                <h3 className="mb-4 text-xl font-semibold text-[var(--color-stone-800)]">
-                  Очно{location.city ? `, ${location.city}` : ''}
+          <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-4">
+            {workflow.map((item) => (
+              <article key={item.step} className="card-soft p-7">
+                <div className="font-serif text-[2rem] text-[var(--color-sage-700)]">{item.step}</div>
+                <h3 className="mt-4 text-[1.8rem] leading-[1.06] text-[var(--color-stone-800)]">
+                  {item.title}
                 </h3>
-                <p className="mb-5 text-sm leading-relaxed text-[var(--color-stone-500)]">
-                  Очные встречи проходят в спокойном пространстве, где можно быть без спешки и
-                  отвлекающих факторов. Такой формат особенно важен тем, кому проще включаться в
-                  контакт при личной встрече.
+                <p className="mt-4 text-sm leading-7 text-[var(--color-stone-500)] md:text-base">
+                  {item.description}
                 </p>
-                <ul className="space-y-2 text-sm text-[var(--color-stone-500)]">
-                  {[locationLabel, location.formatNote || 'Очный формат обсуждается при записи', workingHours]
-                    .filter(Boolean)
-                    .map((item) => (
-                      <li key={item} className="flex items-center gap-2">
-                        <svg className="h-4 w-4 text-[var(--color-sage-500)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                        </svg>
-                        {item}
-                      </li>
-                    ))}
-                </ul>
-              </div>
-            )}
-          </div>
-        </div>
-      </section>
-
-      <section className="bg-white px-4 py-20">
-        <div className="mx-auto max-w-4xl">
-          <h2 className="mb-12 font-serif text-4xl text-[var(--color-stone-800)]">
-            Как устроена работа
-          </h2>
-
-          <div className="mb-12 grid grid-cols-1 gap-6 md:grid-cols-3">
-            {workflowStats.map((item) => (
-              <div key={item.label} className="rounded-2xl bg-[var(--color-cream-100)] p-7 text-center">
-                <div className="mb-2 text-xs uppercase tracking-wider text-[var(--color-stone-400)]">
-                  {item.label}
-                </div>
-                <div className="mb-2 font-serif text-2xl text-[var(--color-stone-800)]">
-                  {item.value}
-                </div>
-                <div className="text-xs text-[var(--color-stone-400)]">{item.desc}</div>
-              </div>
+              </article>
             ))}
           </div>
+        </div>
+      </section>
 
-          <div className="rounded-2xl bg-[var(--color-sage-100)] p-8">
-            <div className="flex items-start gap-5">
-              <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-xl bg-[var(--color-sage-200)]">
-                <svg className="h-6 w-6 text-[var(--color-sage-700)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                </svg>
-              </div>
-              <div>
-                <h3 className="mb-2 text-lg font-semibold text-[var(--color-stone-800)]">
-                  Конфиденциальность
-                </h3>
-                <p className="text-sm leading-relaxed text-[var(--color-stone-500)]">
-                  Всё, что обсуждается на сессиях, остаётся строго между нами. Это
-                  профессиональный стандарт и важная часть безопасной психологической работы.
+      <section className="section-bg-warm section-space px-4">
+        <div className="section-shell">
+          <div className="grid gap-5 md:grid-cols-3">
+            {principles.map((item) => (
+              <article key={item.title} className="panel-muted px-6 py-8">
+                <h2 className="text-[2rem] leading-[1.04] text-[var(--color-stone-800)]">
+                  {item.title}
+                </h2>
+                <p className="mt-4 text-sm leading-7 text-[var(--color-stone-500)] md:text-base">
+                  {item.description}
                 </p>
-              </div>
-            </div>
+              </article>
+            ))}
           </div>
         </div>
       </section>
 
-      <CTASection />
+      <CTASection
+        title="Если важно сначала понять процесс, а потом записываться"
+        subtitle="Можно задать вопросы о методах, формате и первой встрече до начала работы."
+      />
     </>
   )
 }

@@ -100,11 +100,8 @@ export default async function BlogPostPage({ params }: PageProps) {
       />
 
       <article>
-        <header className="relative overflow-hidden bg-[var(--color-cream-100)] px-4 py-16 md:py-24">
-          <div className="pointer-events-none absolute right-0 top-0 h-[500px] w-[500px] rounded-full bg-[var(--color-sage-500)] opacity-[0.05] blur-[120px]" aria-hidden="true" />
-          <div className="pointer-events-none absolute bottom-0 left-0 h-[400px] w-[400px] rounded-full bg-[var(--color-accent)] opacity-[0.04] blur-[100px]" aria-hidden="true" />
-
-          <div className="relative z-10 mx-auto max-w-6xl">
+        <header className="page-hero px-4 py-14 md:py-20">
+          <div className="section-shell relative z-10">
             <Breadcrumbs
               items={[
                 { label: 'Главная', href: '/' },
@@ -114,7 +111,7 @@ export default async function BlogPostPage({ params }: PageProps) {
               className="mb-8"
             />
 
-            <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_280px] lg:items-end">
+            <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_320px] lg:items-end">
               <div className="max-w-4xl space-y-6">
                 <div className="flex flex-wrap items-center gap-3 text-sm text-[var(--color-stone-500)]">
                   {post.category ? <span className="badge badge-sage">{post.category}</span> : null}
@@ -130,16 +127,16 @@ export default async function BlogPostPage({ params }: PageProps) {
                   ) : null}
                 </div>
 
-                <h1 className="font-serif text-4xl leading-[1.06] tracking-tight text-[var(--color-stone-800)] md:text-6xl">
+                <h1 className="text-[2.9rem] leading-[0.98] text-[var(--color-stone-800)] md:text-[4rem]">
                   {post.title}
                 </h1>
 
-                <p className="max-w-3xl text-lg font-light leading-relaxed text-[var(--color-stone-500)] md:text-xl">
+                <p className="max-w-3xl text-lg leading-8 text-[var(--color-stone-500)] md:text-xl">
                   {post.excerpt}
                 </p>
               </div>
 
-              <aside className="rounded-[32px] border border-[var(--color-stone-200)] bg-white/90 p-6 shadow-[var(--shadow-card)] backdrop-blur-sm">
+              <aside className="panel-strong p-6">
                 <div className="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--color-sage-600)]">
                   Полезный переход
                 </div>
@@ -161,7 +158,7 @@ export default async function BlogPostPage({ params }: PageProps) {
 
         {post.coverImage ? (
           <section className="bg-white px-4 pt-10">
-            <div className="mx-auto max-w-6xl overflow-hidden rounded-[32px] border border-[var(--color-stone-200)] bg-[var(--color-stone-100)] shadow-[var(--shadow-soft)]">
+            <div className="section-shell overflow-hidden rounded-[32px] border border-[var(--color-stone-200)] bg-[var(--color-stone-100)] shadow-[var(--shadow-soft)]">
               <img
                 src={post.coverImage}
                 alt={post.coverAlt || post.title}
@@ -172,7 +169,7 @@ export default async function BlogPostPage({ params }: PageProps) {
         ) : null}
 
         <section className="bg-white px-4 py-16">
-          <div className="mx-auto grid max-w-6xl gap-10 lg:grid-cols-[minmax(0,1fr)_320px]">
+          <div className="section-shell grid gap-10 lg:grid-cols-[minmax(0,1fr)_320px]">
             <div className="min-w-0">
               <BlogBlocks blocks={post.content} />
 
@@ -267,7 +264,7 @@ export default async function BlogPostPage({ params }: PageProps) {
               ) : null}
 
               {relatedPages.length > 0 ? (
-                <div className="rounded-[28px] border border-[var(--color-stone-200)] bg-white p-6 shadow-[var(--shadow-soft)]">
+                <div className="panel-strong p-6">
                   <h2 className="font-serif text-2xl text-[var(--color-stone-800)]">
                     Вас может заинтересовать
                   </h2>
@@ -288,7 +285,7 @@ export default async function BlogPostPage({ params }: PageProps) {
                 </div>
               ) : null}
 
-              <div className="rounded-[28px] border border-[var(--color-stone-200)] bg-[var(--color-stone-800)] p-6 text-white">
+              <div className="panel-dark p-6 text-white">
                 <div className="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--color-sage-200)]">
                   Быстрый CTA
                 </div>
@@ -313,7 +310,7 @@ export default async function BlogPostPage({ params }: PageProps) {
 
         {relatedPosts.length > 0 ? (
           <section className="bg-[var(--color-cream-100)] px-4 py-16">
-            <div className="mx-auto max-w-6xl">
+            <div className="section-shell">
               <div className="mb-8 max-w-2xl">
                 <div className="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--color-sage-600)]">
                   Читайте также

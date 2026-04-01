@@ -77,13 +77,13 @@ export function renderInlineContent(text: string, keyPrefix = 'inline') {
 
 export function BlogBlocks({ blocks, className = '' }: BlogBlocksProps) {
   return (
-    <div className={`space-y-6 ${className}`}>
+    <div className={`space-y-7 ${className}`}>
       {blocks.map((block, index) => {
         if (block.type === 'heading') {
           const commonClass =
             block.level === 2
-              ? 'font-serif text-3xl md:text-4xl text-[var(--color-stone-800)] pt-6'
-              : 'font-serif text-2xl md:text-3xl text-[var(--color-stone-800)] pt-4'
+              ? 'font-serif text-[2.2rem] md:text-[3rem] text-[var(--color-stone-800)] pt-8'
+              : 'font-serif text-[1.8rem] md:text-[2.2rem] text-[var(--color-stone-800)] pt-6'
 
           if (block.level === 3) {
             return (
@@ -111,7 +111,7 @@ export function BlogBlocks({ blocks, className = '' }: BlogBlocksProps) {
               }`}
             >
               {block.items.map((item, itemIndex) => (
-                <li key={`${block.id || index}-${itemIndex}`} className="pl-1 leading-8">
+                <li key={`${block.id || index}-${itemIndex}`} className="pl-1 leading-8 md:text-lg">
                   {renderInlineContent(item, `list-${index}-${itemIndex}`)}
                 </li>
               ))}
@@ -181,7 +181,7 @@ export function BlogBlocks({ blocks, className = '' }: BlogBlocksProps) {
         return (
           <p
             key={block.id || index}
-            className="text-base leading-8 text-[var(--color-stone-600)] md:text-lg"
+            className="text-base leading-8 text-[var(--color-stone-600)] md:text-[1.12rem]"
           >
             {renderInlineContent(block.text, `paragraph-${index}`)}
           </p>

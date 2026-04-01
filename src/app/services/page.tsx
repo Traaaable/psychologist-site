@@ -29,40 +29,33 @@ export default function ServicesPage() {
 
   return (
     <>
-      <section className="bg-[var(--color-cream-100)] relative overflow-hidden py-16 md:py-24 px-4">
-        <div className="absolute top-0 right-0 w-[500px] h-[500px] rounded-full opacity-[0.04] bg-[var(--color-sage-500)] blur-[120px] pointer-events-none" aria-hidden="true" />
-        <div className="absolute bottom-0 left-0 w-[400px] h-[400px] rounded-full opacity-[0.03] bg-[var(--color-accent)] blur-[100px] pointer-events-none" aria-hidden="true" />
-
-        <div className="max-w-6xl mx-auto relative z-10">
+      <section className="page-hero px-4 py-14 md:py-20">
+        <div className="section-shell relative z-10">
           <Breadcrumbs
-            items={[{ label: 'Главная', href: '/' }, { label: 'С чем я работаю' }]}
+            items={[{ label: 'Главная', href: '/' }, { label: 'Запросы' }]}
             className="mb-8"
           />
           <div className="max-w-3xl space-y-6">
-            <div className="flex items-center gap-3">
-              <div className="h-1 w-8 bg-gradient-to-r from-[var(--color-sage-500)] to-[var(--color-sage-300)] rounded-full" aria-hidden="true" />
-              <span className="text-xs uppercase tracking-widest font-semibold text-[var(--color-sage-600)]">Направления работы</span>
-            </div>
+            <span className="eyebrow">
+              <span>Запросы</span>
+            </span>
 
-            <div className="inline-flex items-center gap-2.5 bg-white/70 backdrop-blur-md text-[var(--color-sage-700)] px-5 py-3 rounded-full text-sm font-medium border border-[var(--color-sage-200)] shadow-sm">
-              <span className="w-2 h-2 bg-[var(--color-sage-500)] rounded-full animate-pulse" />
-              <span>{services.length} направлений помощи</span>
-            </div>
+            <span className="meta-pill">{services.length} направлений помощи</span>
 
-            <h1 className="font-serif text-5xl md:text-6xl lg:text-7xl text-[var(--color-stone-800)] leading-[1.05] tracking-tight">
-              С чем я работаю
+            <h1 className="text-[3rem] leading-[0.96] text-[var(--color-stone-800)] md:text-[4.1rem]">
+              С какими запросами можно прийти в работу
             </h1>
 
-            <p className="text-lg md:text-xl text-[var(--color-stone-500)] leading-relaxed font-light max-w-2xl">
-              Ниже собраны темы, с которыми я работаю чаще всего. Если не нашли своей ситуации —
-              напишите, и мы вместе посмотрим, чем я могу быть полезна.
+            <p className="max-w-2xl text-lg leading-8 text-[var(--color-stone-500)] md:text-xl">
+              Ниже собраны темы, с которыми работа ведётся чаще всего. Если не нашли точного
+              совпадения со своей ситуацией, это не мешает обсудить её отдельно.
             </p>
           </div>
         </div>
       </section>
 
-      <section className="py-16 px-4 bg-white">
-        <div className="max-w-6xl mx-auto">
+      <section className="section-space px-4 bg-white">
+        <div className="section-shell">
           {services.length > 0 ? (
             <>
               <div className="flex flex-wrap gap-3 justify-center mb-12">

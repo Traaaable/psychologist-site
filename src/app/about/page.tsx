@@ -27,11 +27,8 @@ export default function AboutPage() {
 
   return (
     <>
-      <section className="bg-[var(--color-cream-100)] relative overflow-hidden py-16 md:py-24 px-4">
-        <div className="absolute top-0 right-0 w-[500px] h-[500px] rounded-full opacity-[0.04] bg-[var(--color-sage-500)] blur-[120px] pointer-events-none" aria-hidden="true" />
-        <div className="absolute bottom-0 left-0 w-[400px] h-[400px] rounded-full opacity-[0.03] bg-[var(--color-accent)] blur-[100px] pointer-events-none" aria-hidden="true" />
-
-        <div className="max-w-6xl mx-auto relative z-10">
+      <section className="page-hero px-4 py-14 md:py-20">
+        <div className="section-shell relative z-10">
           <Breadcrumbs
             items={[{ label: 'Главная', href: '/' }, { label: 'Обо мне' }]}
             className="mb-8"
@@ -39,28 +36,24 @@ export default function AboutPage() {
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
             <div className="space-y-6">
-              <div className="flex items-center gap-3">
-                <div className="h-1 w-8 bg-gradient-to-r from-[var(--color-sage-500)] to-[var(--color-sage-300)] rounded-full" aria-hidden="true" />
-                <span className="text-xs uppercase tracking-widest font-semibold text-[var(--color-sage-600)]">О специалисте</span>
-              </div>
+              <span className="eyebrow">
+                <span>О специалисте</span>
+              </span>
 
-              <div className="inline-flex items-center gap-2.5 bg-white/70 backdrop-blur-md text-[var(--color-sage-700)] px-5 py-3 rounded-full text-sm font-medium border border-[var(--color-sage-200)] shadow-sm">
-                <span className="w-2 h-2 bg-[var(--color-sage-500)] rounded-full animate-pulse" />
-                <span>{specialist.title || 'Психолог'}</span>
-              </div>
+              <span className="meta-pill">{specialist.title || 'Психолог'}</span>
 
-              <h1 className="font-serif text-5xl md:text-6xl lg:text-7xl text-[var(--color-stone-800)] leading-[1.05] tracking-tight">
+              <h1 className="text-[3rem] leading-[0.96] text-[var(--color-stone-800)] md:text-[4.1rem]">
                 {specialist.name || specialist.shortName || 'Психолог'}
               </h1>
 
               {specialist.tagline && (
-                <p className="text-lg md:text-xl text-[var(--color-sage-600)] font-light italic font-serif">
+                <p className="text-lg text-[var(--color-sage-700)] italic md:text-xl">
                   {specialist.tagline}
                 </p>
               )}
 
               {about.mainText && (
-                <p className="text-lg text-[var(--color-stone-500)] leading-relaxed font-light max-w-2xl">
+                <p className="max-w-2xl text-lg leading-8 text-[var(--color-stone-500)]">
                   {about.mainText}
                 </p>
               )}

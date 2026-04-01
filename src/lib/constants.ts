@@ -21,13 +21,12 @@ export const SITE_CONFIG = {
 
 // Навигация
 export const NAV_LINKS = [
-  { href: '/about', label: 'Обо мне' },
-  { href: '/services', label: 'С чем я работаю' },
+  { href: '/about', label: 'О специалисте' },
+  { href: '/services', label: 'Запросы' },
+  { href: '/how-it-works', label: 'Методы работы' },
+  { href: '/pricing', label: 'Услуги и условия' },
   { href: '/blog', label: 'Блог' },
-  { href: '/how-it-works', label: 'Консультации' },
-  { href: '/pricing', label: 'Стоимость' },
-  { href: '/faq', label: 'Вопросы' },
-  { href: '/contact', label: 'Записаться' },
+  { href: '/contact', label: 'Контакты' },
 ]
 
 // Направления работы

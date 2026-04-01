@@ -60,20 +60,22 @@ export function CTASection({
   const hasContacts = contacts.telegram || contacts.whatsapp || contacts.phone
 
   return (
-    <section className={`${bgClass} py-20 px-4`} aria-labelledby="cta-title">
-      <div className="max-w-3xl mx-auto text-center">
-        {/* Декоративный элемент */}
-        <div className={`w-10 h-px mx-auto mb-6 ${variant === 'cream' ? 'bg-[var(--color-sage-300)]' : 'bg-white/30'}`} />
+    <section className="section-space px-4" aria-labelledby="cta-title">
+      <div className="section-shell">
+        <div className={`${bgClass} rounded-[36px] px-6 py-10 text-center md:px-10 md:py-14`}>
+          <div className={`mx-auto mb-6 w-10 h-px ${variant === 'cream' ? 'bg-[var(--color-sage-300)]' : 'bg-white/30'}`} />
 
-        <h2
-          id="cta-title"
-          className={`font-serif text-4xl md:text-5xl ${titleClass} mb-5 leading-tight`}
-        >
-          {title}
-        </h2>
-        <p className={`text-lg ${subtitleClass} mb-10 leading-relaxed`}>{subtitle}</p>
+          <h2
+            id="cta-title"
+            className={`font-serif text-4xl md:text-5xl ${titleClass} mb-5 leading-tight`}
+          >
+            {title}
+          </h2>
+          <p className={`mx-auto max-w-2xl text-lg ${subtitleClass} mb-10 leading-relaxed`}>
+            {subtitle}
+          </p>
 
-        <div className="flex flex-col sm:flex-row gap-4 justify-center">
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
           {variant === 'sage' ? (
             <Button
               href={primaryBtn.href}
@@ -90,47 +92,48 @@ export function CTASection({
               {secondaryBtn.label}
             </Button>
           )}
-        </div>
+          </div>
 
-        {showContacts && hasContacts && (
-          <p className={`mt-8 text-sm ${contactClass}`}>
-            Или напишите напрямую:{' '}
-            {contacts.telegram && (
-              <>
+          {showContacts && hasContacts && (
+            <p className={`mt-8 text-sm ${contactClass}`}>
+              Или напишите напрямую:{' '}
+              {contacts.telegram && (
+                <>
+                  <a
+                    href={contacts.telegram}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="underline underline-offset-3 hover:no-underline transition-all"
+                  >
+                    Telegram
+                  </a>
+                  {(contacts.whatsapp || contacts.phone) && ' · '}
+                </>
+              )}
+              {contacts.whatsapp && (
+                <>
+                  <a
+                    href={contacts.whatsapp}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="underline underline-offset-3 hover:no-underline transition-all"
+                  >
+                    WhatsApp
+                  </a>
+                  {contacts.phone && ' · '}
+                </>
+              )}
+              {contacts.phone && (
                 <a
-                  href={contacts.telegram}
-                  target="_blank"
-                  rel="noopener noreferrer"
+                  href={`tel:${contacts.phone}`}
                   className="underline underline-offset-3 hover:no-underline transition-all"
                 >
-                  Telegram
+                  {contacts.phone}
                 </a>
-                {(contacts.whatsapp || contacts.phone) && ' · '}
-              </>
-            )}
-            {contacts.whatsapp && (
-              <>
-                <a
-                  href={contacts.whatsapp}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="underline underline-offset-3 hover:no-underline transition-all"
-                >
-                  WhatsApp
-                </a>
-                {contacts.phone && ' · '}
-              </>
-            )}
-            {contacts.phone && (
-              <a
-                href={`tel:${contacts.phone}`}
-                className="underline underline-offset-3 hover:no-underline transition-all"
-              >
-                {contacts.phone}
-              </a>
-            )}
-          </p>
-        )}
+              )}
+            </p>
+          )}
+        </div>
       </div>
     </section>
   )

@@ -16,34 +16,31 @@ export function SectionHeader({
   className = '',
 }: SectionHeaderProps) {
   const alignClass = align === 'center' ? 'text-center mx-auto' : 'text-left'
+  const containerWidth = align === 'center' ? 'max-w-3xl' : 'max-w-2xl'
 
   const titleSizeClass = {
-    lg: 'text-3xl md:text-4xl',
-    xl: 'text-4xl md:text-5xl',
-    '2xl': 'text-5xl md:text-6xl',
+    lg: 'text-3xl md:text-[2.7rem]',
+    xl: 'text-[2.55rem] md:text-[3.4rem]',
+    '2xl': 'text-[2.9rem] md:text-[4.2rem]',
   }[titleSize]
 
   return (
     <div className={`${className}`}>
-      <div className={`${alignClass} space-y-5 ${align === 'center' ? 'max-w-3xl' : ''}`}>
-        {/* Accent Line */}
+      <div className={`${alignClass} ${containerWidth} space-y-4`}>
         {label && (
-          <div className={`flex items-center gap-3 ${align === 'center' ? 'justify-center' : ''}`}>
-            <div className="h-1 w-8 bg-gradient-to-r from-[var(--color-sage-500)] to-[var(--color-sage-300)] rounded-full" aria-hidden="true" />
-            <span className="text-xs uppercase tracking-widest font-semibold text-[var(--color-sage-600)]">{label}</span>
+          <div className={`${align === 'center' ? 'justify-center' : ''} eyebrow`}>
+            <span>{label}</span>
           </div>
         )}
 
-        {/* Heading */}
         <h2
-          className={`font-serif ${titleSizeClass} text-[var(--color-stone-800)] leading-[1.05] tracking-tight`}
+          className={`font-serif ${titleSizeClass} text-[var(--color-stone-800)] leading-[1.02] tracking-tight`}
         >
           {title}
         </h2>
 
-        {/* Subtitle */}
         {subtitle && (
-          <p className="text-lg md:text-xl text-[var(--color-stone-500)] leading-relaxed font-light">
+          <p className="text-base leading-8 text-[var(--color-stone-500)] md:text-lg">
             {subtitle}
           </p>
         )}
